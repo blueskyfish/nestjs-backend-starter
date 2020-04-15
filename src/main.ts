@@ -1,0 +1,13 @@
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
+}
+
+bootstrap()
+  .catch(reason => {
+    console.error('> Error: Bootstrap is faild =>', reason);
+    process.exit(-1);
+  });
