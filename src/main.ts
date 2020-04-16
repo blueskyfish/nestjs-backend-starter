@@ -8,6 +8,6 @@ async function bootstrap() {
 
 bootstrap()
   .catch(reason => {
-    console.error('> Error: Bootstrap is faild =>', reason);
+    console.error('> Error: Bootstrap is failed =>', reason);
     process.exit(-1);
   });
