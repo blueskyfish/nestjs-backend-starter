@@ -40,6 +40,16 @@ Some programs must be available on the developer computer:
 * NestJS CLI <https://nestjs.com/><br>install global: `yarn global add @nestjs/cli` or `npm i -g @nestjs/cli`
 
 
+## Setup
+
+TBD
+
+
+## Configuration
+
+TBD
+
+
 ## Licence
 
 ```text
