@@ -47,7 +47,83 @@ TBD
 
 ## Configuration
 
-TBD
+This section describes the application configuration and commitments. The node application is configured over environment variables.
+
+The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm2-doc-single-page/>
+
+
+### Environment
+
+> Some environment variable are not in the PM2 configuration, because they are secret and define global in the user profile file.
+
+| Name                | Default        | Required | PM2 | Description
+|---------------------|----------------|:--------:|:---:|--------------------------------------------------------
+| **PORT**            | -              | Yes      | Yes | The port of the server being listen for request
+| **HOST**            | `localhost`    | No       | Yes | The host name of the server
+| **DB_PORT**         | `3306`         | No       | Yes | The port of the database service
+| **DB_HOST**         | `localhost`    | No       | Yes | The host name of the database server
+| **DB_USER**         | -              | Yes      | Yes | The database user
+| **DB_DATABASE**     | -              | Yes      | Yes | The name of the database
+| **DB_PASSWORD**     | -              | Yes      | No  | The password of the database user.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
+| **AUTH_SECRET**     | -              | Yes      | No  | The secret for the authorization.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
+
+
+### PM2 Configuration
+
+PM2 is configured via a javascript config file. The file name must end with `config.js`.
+
+
+**An excerpt from the configuration**
+
+```js
+/*!
+ * Configuration file for the PM2
+ */
+const os = require('os');
+
+// ...
+
+const userHome = os.homedir();
+const dbPassword = fromEnv('DB_PASSWORD').asString;
+const authSecret = fromEnv('AUTH_SECRET').asString;
+
+module.exports = {
+  apps: [
+    {
+      name: 'appName',
+      script: `${userHome}/path/to/installed/lib/main.js`,
+      cwd: `${userHome}/path/to/installed`,
+      watch: true,
+      env: {
+        'PORT': '17050',
+        'HOST': '127.0.0.1',
+        'DB_PORT': '3306',
+        'DB_HOST': 'localhost',
+        'DB_USER': 'dbUser',
+        'DB_DATABASE': 'databaseName',
+        'DB_PASSWORD': dbPassword,
+        'AUTH_SECRET': authSecret,
+      },
+      listen_timeout: 5000,
+      kill_timeout: 2000,
+      restart_delay: 4000,
+      max_restarts: 5,
+      wait_ready: true,
+      source_map_support: true,
+    }
+  ]
+};
+```
+
+The critical environment settings are not setting in the **PM2** configuration file. They are setting in the User `.profile` file.
+
+**Example of .profile**
+
+```text
+export DB_PASSWORD=xxxx
+export AUTH_SECRET=yyyy
+```
+
 
 
 ## Licence
