@@ -44,6 +44,28 @@ Some programs must be available on the developer computer:
 
 TBD
 
+### Database in Docker
+
+The Mysql / MariaDB database engine is running in docker container instance. There is also an instance of `phpMyAdmin` to edit the database data.
+
+**Structure**
+
+| Name                       | Description
+|----------------------------|------------------------------------------
+| `docker-compose.yml`       | The docker compose for the mysql database- and phpMyAdmin image.<br>It is depend on the file `docker.env`.
+| `docker.env`               | The environment variables for the mysql server.
+| `docker/db`                | The docker directory with the mysql configuration
+| `docker/db/Dockerfile`     | The MySQL Docker file.
+| `docker/db/sql`            | The directory for sql statement files for initialization of the database.
+
+![Start Page of MySQL Database](assets/phpmyadmin.png)
+
+### Before Usage
+
+* Setup the different ports for the backend server, the database server and the phpMyAdmin instances.
+* Search for the TODO and insert or replace value with your project name
+* Build the docker images
+
 
 ## Configuration
 

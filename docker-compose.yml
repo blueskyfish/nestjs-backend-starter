@@ -1,0 +1,27 @@
+#
+# Docker Compose with MySQL Server and phpMyAdmin
+#
+# TODO Rename the image- and container names
+#
+version: '3'
+services:
+  db:
+    build:
+      context: docker/db
+    image: backend-starter/db
+    container_name: backend_starter_db
+    volumes:
+      - ./var/mysql/data:/app/data
+    ports:
+      - "16306:3306"
+    env_file:
+      - docker.env
+  admin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: backend_starter_admin
+    ports:
+      - "17008:80"
+    links:
+      - db:db
+    env_file:
+      - docker.env
