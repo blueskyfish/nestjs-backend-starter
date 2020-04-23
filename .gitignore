@@ -16,6 +16,9 @@
 # Local History for Visual Studio Code
 .history/
 
+# Docker Output
+var/
+
 
 # ---< Node >------------------------
 # Logs
