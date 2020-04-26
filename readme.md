@@ -42,7 +42,15 @@ Some programs must be available on the developer computer:
 
 ## Setup
 
-TBD
+
+### Testing
+
+To execute the test cases, script `create-keys.sh` must first be executed to create a set of RSA keys.
+
+Then the two files `test-private.pem` and `test-public.pem` are available, which are necessary for the test cases.
+
+> **NOTE**: Please never commit the keys to the git repository.
+
 
 ### Database in Docker
 
@@ -87,7 +95,11 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 | **DB_USER**         | -              | Yes      | Yes | The database user
 | **DB_DATABASE**     | -              | Yes      | Yes | The name of the database
 | **DB_PASSWORD**     | -              | Yes      | No  | The password of the database user.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
-| **AUTH_SECRET**     | -              | Yes      | No  | The secret for the authorization.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
+| **AUTH_PRI_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the private key
+| **AUTH_PUB_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the public key
+| **AUTH_HEADER**     | `x-starter-key` | No      | Yes | Environment variable for the name of the http header with the encrypted token of the current user.
+| **AUTH_EXPIRES**    | `7`            | No       | Yes | Environment variable for the time as days until the expires time is reaching.
+
 
 
 ### PM2 Configuration

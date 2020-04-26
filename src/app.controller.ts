@@ -32,7 +32,7 @@ export class AppController {
     description: 'The validation error message',
     type: ErrorBody
   })
-  @Get()
+  @Get(['/', 'check'])
   getHello(@Query() params: QueryHelloParams): string {
     return this.appService.getHello(params.name);
   }

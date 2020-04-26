@@ -1,9 +1,15 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { RouteInfo } from '@nestjs/common/interfaces';
 import { DEFAULT_DB_HOST, DEFAULT_DB_PORT, EnvName } from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AppAuthModule } from './auth/auth.module';
+import { AuthMiddlewareService } from './auth/web';
 import { AppCommonModule } from './common/common.module';
+import { DbMiddleware } from './common/database/db.middleware';
 import { fromEnv } from './common/env';
+import { RequestFinishMiddleware } from './common/middleware';
+import { SecondUtil } from './common/util';
 
 const controllers: any[] = [
   AppController,
@@ -20,7 +26,13 @@ const controllers: any[] = [
       user: fromEnv(EnvName.DbUser).asString,
       database: fromEnv(EnvName.DbDatabase).asString,
       password: fromEnv(EnvName.DbPassword).asString,
-      connectLimit: 20, // TODO Enviroment variable
+      connectLimit: 20, // TODO Environment variable
+    }),
+    AppAuthModule.forRoot({
+      priKeyFilename: fromEnv(EnvName.AuthPriFile).asString,
+      pubKeyFilename: fromEnv(EnvName.AuthPubFile).asString,
+      expires: SecondUtil.fromDays(fromEnv(EnvName.AuthExpires).asNumber || 7),
+      headerName: fromEnv(EnvName.AuthHeader).asString || 'x-starter-key',
     }),
   ],
   controllers: [
@@ -30,4 +42,23 @@ const controllers: any[] = [
     AppService
   ]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+
+  configure(consumer: MiddlewareConsumer): any {
+
+    const allRoutes: RouteInfo = {
+      path: '*',
+      method: RequestMethod.ALL,
+    };
+
+    consumer
+      .apply(RequestFinishMiddleware)
+      .forRoutes(allRoutes)
+      .apply(DbMiddleware)
+      .exclude('/about')
+      .forRoutes(allRoutes)
+      .apply(AuthMiddlewareService)
+      .exclude('/', '/check', '/about', '/login')
+      .forRoutes('*'); // TODO Add here all controllers
+  }
+}

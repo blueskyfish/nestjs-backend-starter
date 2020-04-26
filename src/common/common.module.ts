@@ -1,10 +1,12 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { DB_CONFIG_TOKEN, DbConfig, DbService, IDbConfig } from './database';
 import { DbMiddleware } from './database/db.middleware';
+import { RequestFinishMiddleware } from './middleware';
 
 const services: any[] = [
   DbService,
   DbMiddleware,
+  RequestFinishMiddleware,
 ];
 
 
@@ -15,6 +17,7 @@ const services: any[] = [
  */
 @Module({})
 export class AppCommonModule {
+  // TODO: "App" => Rename the shortcut with your project specifications
 
   /**
    * Add the database configuration and provides the services.
