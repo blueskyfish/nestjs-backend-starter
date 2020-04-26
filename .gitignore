@@ -19,6 +19,9 @@
 # Docker Output
 var/
 
+# auth test
+*.pem
+
 
 # ---< Node >------------------------
 # Logs
