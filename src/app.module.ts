@@ -5,14 +5,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppAuthModule } from './auth/auth.module';
 import { AuthMiddlewareService } from './auth/web';
+import { AppBusinessModule } from './business/business.module';
 import { AppCommonModule } from './common/common.module';
 import { DbMiddleware } from './common/database/db.middleware';
 import { fromEnv } from './common/env';
 import { RequestFinishMiddleware } from './common/middleware';
 import { SecondUtil } from './common/util';
+import { LoginController } from './login.controller';
 
 const controllers: any[] = [
   AppController,
+  LoginController
 ];
 
 /**
@@ -34,6 +37,7 @@ const controllers: any[] = [
       expires: SecondUtil.fromDays(fromEnv(EnvName.AuthExpires).asNumber || 7),
       headerName: fromEnv(EnvName.AuthHeader).asString || 'x-starter-key',
     }),
+    AppBusinessModule,
   ],
   controllers: [
     ...controllers,
@@ -58,7 +62,7 @@ export class AppModule implements NestModule {
       .exclude('/about')
       .forRoutes(allRoutes)
       .apply(AuthMiddlewareService)
-      .exclude('/', '/check', '/about', '/login')
+      .exclude('/', '/check', '/about', '/login', '/register')
       .forRoutes('*'); // TODO Add here all controllers
   }
 }
