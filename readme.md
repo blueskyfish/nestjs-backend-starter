@@ -43,6 +43,13 @@ Some programs must be available on the developer computer:
 ## Setup
 
 
+### Before Usage
+
+* Setup the different ports for the backend server, the database server and the phpMyAdmin instances.
+* Search for the TODO and insert or replace value with your project specifications
+* Build the docker images
+
+
 ### Testing
 
 To execute the test cases, script `create-keys.sh` must first be executed to create a set of RSA keys.
@@ -66,13 +73,9 @@ The Mysql / MariaDB database engine is running in docker container instance. The
 | `docker/db/Dockerfile`     | The MySQL Docker file.
 | `docker/db/sql`            | The directory for sql statement files for initialization of the database.
 
+**Preview of phpMyAdmin**
+
 ![Start Page of MySQL Database](assets/phpmyadmin.png)
-
-### Before Usage
-
-* Setup the different ports for the backend server, the database server and the phpMyAdmin instances.
-* Search for the TODO and insert or replace value with your project name
-* Build the docker images
 
 
 ## Configuration
