@@ -12,10 +12,12 @@ import { fromEnv } from './common/env';
 import { RequestFinishMiddleware } from './common/middleware';
 import { SecondUtil } from './common/util';
 import { LoginController } from './login.controller';
+import { RegisterController } from './register.controller';
 
 const controllers: any[] = [
   AppController,
-  LoginController
+  LoginController,
+  RegisterController,
 ];
 
 /**
