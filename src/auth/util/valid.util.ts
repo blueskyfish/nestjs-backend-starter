@@ -10,4 +10,15 @@ export class ValidUtil {
   static isPositiv(s: any): boolean {
     return !ValidUtil.notNum(s) && NumberUtil.toInt(s) > 0;
   }
+
+  /**
+   * Check whether the string is not null, not undefined and not empty
+   *
+   * @param {string} s the string
+   * @returns {boolean} `true` means the string has content.
+   */
+  static notEmpty(s: string): boolean {
+    return !_.isNil(s) && s !== '';
+  }
+
 }

@@ -4,8 +4,7 @@ import { cryptoFactory } from '../crypto/crypto.factory';
 import { CryptoService } from '../crypto/crypto.service';
 import { VerifierError } from './verifier.error';
 import { VerifierService } from './verifier.service';
-import { TOKEN_CONFIG, TokenConfig } from '../token/token.config';
-import { TokenService } from '../token/token.service';
+import { TokenService } from '../token';
 
 const sleep = async (seconds: number): Promise<void> => {
   return new Promise((resolve => {
@@ -33,10 +32,6 @@ describe('VerifierService', () => {
         {
           provide: CRYPTO_CONFIG,
           useFactory: async () => await cryptoFactory(priKeyFilename, pubKeyFilename),
-        },
-        {
-          provide: TOKEN_CONFIG,
-          useValue: new TokenConfig(5), // 5 seconds expires
         }
       ]
     }).compile();
@@ -63,15 +58,6 @@ describe('VerifierService', () => {
       expect(authUser.id).toEqual(4711);
       expect(authUser.hasRole('admin')).toBeTruthy();
       expect(authUser.hasRole('test')).toBeFalsy();
-    });
-
-    it('should run into "expires" exception', async () => {
-
-      await sleep(7);
-
-      expect(() => {
-        authService.fromToken(token);
-      }).toThrowError(VerifierError);
     });
 
     it('should run into "notFound" exception with null', () => {

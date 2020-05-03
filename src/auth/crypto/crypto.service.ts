@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { privateEncrypt, publicDecrypt } from 'crypto';
-import { ENCODE_HEX, ENCODE_UTF } from '../util';
+import { createHash, privateEncrypt, publicDecrypt } from 'crypto';
+import { ENCODE_HEX, ENCODE_UTF, ValidUtil } from '../util';
 import { CRYPTO_CONFIG, CryptoKeys } from './crypto.config';
+import { CryptoError } from './crypto.error';
 
 
 /**
@@ -34,4 +35,25 @@ export class CryptoService {
     return publicDecrypt(this.config.publicKey, buffered).toString(ENCODE_UTF);
   }
 
+  digest(prefix: string, password: string): string {
+
+    if(!ValidUtil.notEmpty(prefix) || !ValidUtil.notEmpty(password)) {
+      throw new CryptoError('required', 'The parameters are required');
+    }
+
+    const value = `${this.config.passwordSalt}${prefix}${password}`;
+
+    return createHash('sha256').update(value).digest(ENCODE_HEX);
+  }
+
+  verify(passwordHash: string, prefix: string, password: string): boolean {
+
+    if (!ValidUtil.notEmpty(password)) {
+      throw new CryptoError('required', 'The parameters are required');
+    }
+
+    const hashedPassword = this.digest(prefix, password);
+
+    return passwordHash === hashedPassword;
+  }
 }

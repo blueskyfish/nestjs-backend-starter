@@ -32,15 +32,15 @@ export class VerifierService {
    */
   fromToken(token: string): AuthUser {
     const authValue = this.decryptToken(token);
+
     const authData = parseAuthData(authValue);
 
-    validateAuthData(authData);
-
-    // check the expires
-    const currentTime = SecondUtil.now();
-    const tokenTime = authData.creation + authData.expires;
-    if (tokenTime < currentTime) {
-      throw new VerifierError('expires', 'Token is expires');
+    // All required attributes are exist and valid
+    if (
+      !ValidUtil.isPositiv(authData.id) || !ValidUtil.isPositiv(authData.device) ||
+      _.isNil(authData.roles) && !_.isArray(authData.roles)
+    ) {
+      throw new VerifierError('invalid', 'Token data is not valid');
     }
 
     return new AuthUser(authData);
@@ -62,15 +62,5 @@ const parseAuthData = (data: string): IAuthData => {
     return JSON.parse(data);
   } catch (e) {
     throw new VerifierError('notSupport', 'Token is not support')
-  }
-}
-
-// validate the auth data
-const validateAuthData = (authData: IAuthData): void => {
-  if (!ValidUtil.isPositiv(authData.id) || !ValidUtil.isPositiv(authData.device) ||
-    _.isNil(authData.roles) && !_.isArray(authData.roles) ||
-    !ValidUtil.isPositiv(authData.creation) || !ValidUtil.isPositiv(authData.expires))
-  {
-    throw new VerifierError('invalid', 'Token data is not valid');
   }
 }

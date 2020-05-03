@@ -38,9 +38,16 @@ Some programs must be available on the developer computer:
 * Docker Compose
 * Typescript <https://www.typescriptlang.org/><br>install global: `yarn global add typescript` or `npm i -g typescript`
 * NestJS CLI <https://nestjs.com/><br>install global: `yarn global add @nestjs/cli` or `npm i -g @nestjs/cli`
-
+* OpenSSL commando line interface for generate the local or develop cetrications (public and private keys)
 
 ## Setup
+
+
+### Before Usage
+
+* Setup the different ports for the backend server, the database server and the phpMyAdmin instances.
+* Search for the TODO and insert or replace value with your project specifications
+* Build the docker images
 
 
 ### Testing
@@ -66,13 +73,9 @@ The Mysql / MariaDB database engine is running in docker container instance. The
 | `docker/db/Dockerfile`     | The MySQL Docker file.
 | `docker/db/sql`            | The directory for sql statement files for initialization of the database.
 
+**Preview of phpMyAdmin**
+
 ![Start Page of MySQL Database](assets/phpmyadmin.png)
-
-### Before Usage
-
-* Setup the different ports for the backend server, the database server and the phpMyAdmin instances.
-* Search for the TODO and insert or replace value with your project name
-* Build the docker images
 
 
 ## Configuration
@@ -97,7 +100,6 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 | **DB_PASSWORD**     | -              | Yes      | No  | The password of the database user.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
 | **AUTH_PRI_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the private key
 | **AUTH_PUB_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the public key
-| **AUTH_HEADER**     | `x-starter-key` | No      | Yes | Environment variable for the name of the http header with the encrypted token of the current user.
 | **AUTH_EXPIRES**    | `7`            | No       | Yes | Environment variable for the time as days until the expires time is reaching.
 
 
@@ -137,6 +139,7 @@ module.exports = {
         'DB_DATABASE': 'databaseName',
         'DB_PASSWORD': dbPassword,
         'AUTH_SECRET': authSecret,
+        'AUTH_EXPIRES': SecondUtil.fromDays(7),
       },
       listen_timeout: 5000,
       kill_timeout: 2000,
@@ -158,6 +161,59 @@ export DB_PASSWORD=xxxx
 export AUTH_SECRET=yyyy
 ```
 
+## Authorization & Authentication
+
+The protected endpoints require a logged in user. Here is a description of how a user logs on first, gets an authorization token and uses it for a protected endpoint.
+
+* Authenticated User
+* Authentification
+* Authentication
+
+### Authenticated User
+
+An authenticated user is a record containing the ID and roles of the user and his device ID.
+
+The roles are used to determine whether the user has the necessary rights to execute the endpoint. The Device Id is used to check the validity of the logon.
+
+**Example of the auth user data**
+
+```json
+{
+  "id": 4711,
+  "device": 34948,
+  "roles": ["read", "write", "admin"]
+}
+```
+
+### Authentification
+
+A user must log in with his email and password. If both are correct, a device id is created and created together with
+the user's roles to an Authenticated User.
+
+This user is encrypted with a private key and can be decrypted with the public key in the authentication process.
+
+
+#### Authentication
+
+A logged in user is required in protected endpoints. The client must send this information in the HTTP header **x-backend-starter**.
+
+In the middleware service, the authenticated user is extracted from the header (*decrypted with the public key*) and checked
+with the included device whether the user is still known and valid with his device.
+
+How long a user device is valid can be defined with the environment variable **AUTH_EXPIRES** (*the time unit is seconds*)
+
+If a user is no longer valid with his device, the user must log in again.
+
+If the check fails, an Http Status Code UNAUTHENTICATED is always sent.
+
+
+### Access to AuthUser
+
+In the endpoint the decorator '@User' can be used.
+
+```js
+async getBookList(@User() authUser: AuthUser, @Param('authorId') authorId: number): Promise<Book[]> {}
+```
 
 
 ## Licence

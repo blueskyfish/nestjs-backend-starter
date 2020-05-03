@@ -1,15 +1,21 @@
 import { ICryptoConfig } from './crypto';
-import { ITokenConfig } from './token';
-import { IAuthMiddlewareConfig } from './web';
 
 /**
- * The configuration interface that is extending the {@link ICryptoConfig}, {@link ITokenConfig} and
- * {@link IAuthMiddlewareConfig}
+ * The http header name for the authorization token
+ */
+export const HTTP_AUTH_HEADER = 'x-backend-starter';
+
+export const API_KEY_NAME = 'ApiKey';
+
+export const API_KEY_STARTER: Record<string, string[]>[] = [{
+  [API_KEY_NAME]: []
+}];
+
+/**
+ * The configuration interface that is extending the {@link ICryptoConfig}
  *
  * * priKeyFilename
  * * pubKeyFilename
- * * expires
- * * headerName
  */
-export interface IAuthConfig extends ICryptoConfig, ITokenConfig, IAuthMiddlewareConfig {
+export interface IAuthConfig extends ICryptoConfig {
 }

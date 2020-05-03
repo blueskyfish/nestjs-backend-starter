@@ -13,7 +13,7 @@ services:
     volumes:
       - ./var/mysql/data:/app/data
     ports:
-      - "16306:3306"
+      - "17306:3306"
     env_file:
       - docker.env
   admin:

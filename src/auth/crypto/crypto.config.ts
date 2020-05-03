@@ -19,9 +19,9 @@ export interface ICryptoConfig {
 }
 
 /**
- * A container with the public- and private key
+ * A container with the public- and private key and the password salt
  */
 export class CryptoKeys {
 
-  constructor(public readonly publicKey: string, public readonly privateKey) {}
+  constructor(public readonly publicKey: string, public readonly privateKey, public readonly passwordSalt) {}
 }

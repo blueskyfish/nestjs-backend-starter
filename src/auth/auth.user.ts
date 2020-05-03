@@ -18,16 +18,6 @@ export interface IAuthData {
    * The array of the roles for the user
    */
   roles: string[];
-
-  /**
-   * The timestamp (second from since January 1, 1970 00:00:00 UTC)
-   */
-  creation: number;
-
-  /**
-   * The expires time
-   */
-  expires: number;
 }
 
 

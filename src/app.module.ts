@@ -1,18 +1,26 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { RouteInfo } from '@nestjs/common/interfaces';
+import { ScheduleModule } from '@nestjs/schedule';
 import { DEFAULT_DB_HOST, DEFAULT_DB_PORT, EnvName } from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppAuthModule } from './auth/auth.module';
-import { AuthMiddlewareService } from './auth/web';
+import { AuthMiddleware } from './business/middleware';
+import { AppBusinessModule } from './business/business.module';
 import { AppCommonModule } from './common/common.module';
 import { DbMiddleware } from './common/database/db.middleware';
 import { fromEnv } from './common/env';
 import { RequestFinishMiddleware } from './common/middleware';
 import { SecondUtil } from './common/util';
+import { LoginController } from './login.controller';
+import { RegisterController } from './register.controller';
+import { UserController } from './user.controller';
 
 const controllers: any[] = [
   AppController,
+  LoginController,
+  RegisterController,
+  UserController,
 ];
 
 /**
@@ -20,6 +28,8 @@ const controllers: any[] = [
  */
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
+
     AppCommonModule.forRoot({
       host: fromEnv(EnvName.DbHost).asString || DEFAULT_DB_HOST,
       port: fromEnv(EnvName.DbPort).asNumber || DEFAULT_DB_PORT,
@@ -31,8 +41,9 @@ const controllers: any[] = [
     AppAuthModule.forRoot({
       priKeyFilename: fromEnv(EnvName.AuthPriFile).asString,
       pubKeyFilename: fromEnv(EnvName.AuthPubFile).asString,
-      expires: SecondUtil.fromDays(fromEnv(EnvName.AuthExpires).asNumber || 7),
-      headerName: fromEnv(EnvName.AuthHeader).asString || 'x-starter-key',
+    }),
+    AppBusinessModule.forRoot({
+      deviceExpires: SecondUtil.fromMinutes(fromEnv(EnvName.AuthExpires).asNumber || 7),
     }),
   ],
   controllers: [
@@ -46,6 +57,7 @@ export class AppModule implements NestModule {
 
   configure(consumer: MiddlewareConsumer): any {
 
+    const publicRoutes = ['/', '/check', '/about', '/login', '/register'];
     const allRoutes: RouteInfo = {
       path: '*',
       method: RequestMethod.ALL,
@@ -55,10 +67,11 @@ export class AppModule implements NestModule {
       .apply(RequestFinishMiddleware)
       .forRoutes(allRoutes)
       .apply(DbMiddleware)
-      .exclude('/about')
       .forRoutes(allRoutes)
-      .apply(AuthMiddlewareService)
-      .exclude('/', '/check', '/about', '/login')
-      .forRoutes('*'); // TODO Add here all controllers
+      .apply(AuthMiddleware)
+      .exclude(...publicRoutes)
+      .forRoutes(
+        UserController,
+      ); // TODO Add here all controllers
   }
 }

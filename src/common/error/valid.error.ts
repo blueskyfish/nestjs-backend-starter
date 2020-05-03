@@ -15,6 +15,28 @@ export interface IErrorMessages {
 
 /**
  * The Validation Error class for an invalid data object
+ *
+ * ```json
+ * {
+ *     "method": "GET",
+ *     "url": "/test",
+ *     "group": "validate",
+ *     "code": "parameters",
+ *     "message": "Entities with validation errors",
+ *     "stack": [
+ *         "validate.parameters: Entities with validation errors",
+ *         "    at ValidationPipe.exceptionFactory (/Users/sarah/Projects/blueskyfish/github/nestjs-backend-starter/dist/main.js:27:20)",
+ *         "    at async /Users/sarah/Projects/blueskyfish/github/nestjs-backend-starter/node_modules/@nestjs/core/router/router-proxy.js:8:17"
+ *     ],
+ *     "data": {
+ *         "errors": {
+ *             "property": [
+ *                 "property: message"
+ *             ],
+ *         }
+ *     }
+ * }
+ * ```
  */
 export class ValidError extends CommonError {
 
