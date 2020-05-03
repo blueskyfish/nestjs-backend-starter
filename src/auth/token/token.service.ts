@@ -1,10 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import { SecondUtil } from '../../common/util';
-import { ValidUtil } from '../util';
 import { IAuthData } from '../auth.user';
 import { CryptoService } from '../crypto/crypto.service';
-import { TOKEN_CONFIG, TokenConfig } from './token.config';
+import { ValidUtil } from '../util';
 import { TokenError } from './token.error';
 
 /**
@@ -20,7 +18,7 @@ import { TokenError } from './token.error';
 @Injectable()
 export class TokenService {
 
-  constructor(@Inject(TOKEN_CONFIG) private config: TokenConfig, private cryptoService: CryptoService) {
+  constructor(private cryptoService: CryptoService) {
   }
 
   /**
@@ -38,8 +36,6 @@ export class TokenService {
       id: template.id,
       device: template.device,
       roles: [...template.roles],
-      creation: SecondUtil.now(),
-      expires: this.config.expires,
     };
 
     const authValue = JSON.stringify(authData);

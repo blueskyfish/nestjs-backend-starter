@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as _ from 'lodash';
 import { DEFAULT_HOST, EnvName } from './app.config';
 import { AppModule } from './app.module';
+import { API_KEY_NAME, API_KEY_STARTER, HTTP_AUTH_HEADER } from './auth';
 import { fromEnv } from './common/env';
 import { BootstrapError, ErrorHandlerFilter, ValidError } from './common/error';
 
@@ -40,13 +41,12 @@ async function bootstrap() {
     .setTitle('NestJS Backend Starter')
     .setDescription('The OpenAPI documentation for "NestJS Backend Starter"')
     .setVersion('1.0')
-    // TODO Add Security Options (protected endpoints)
-    // .addSecurity(API_KEY_NAME, {
-    //   name: HTTP_AUTH_HEADER,
-    //   in: 'header',
-    //   type: 'apiKey',
-    //   description: 'The api key for access for protected resource (contains the current user information)'
-    // })
+    .addSecurity(API_KEY_NAME, {
+      name: HTTP_AUTH_HEADER,
+      in: 'header',
+      type: 'apiKey',
+      description: 'The api key for access for protected resource (contains the current user information)'
+    })
     .build();
   const document = SwaggerModule.createDocument(app, options);
 

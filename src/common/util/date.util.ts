@@ -67,7 +67,10 @@ export class DateUtil {
     return moment(d);
   }
 
-  static formatDateTime(m: Moment): string {
+  static formatDateTime(m?: Moment): string {
+    if (!m) {
+      m = DateUtil.now();
+    }
     return `${DateUtil.formatDate(m)} ${DateUtil.formatTime(m)}`;
   }
 

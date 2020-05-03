@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
+import { AuthUser } from '../../auth';
 import { getAuthUser } from './auth-middleware.util';
 
 /**
@@ -8,10 +9,10 @@ import { getAuthUser } from './auth-middleware.util';
  * **Usage**
  *
  * ```ts
- * getBookList(@AuthUser() authUser: AuthUser): Promise<Book[]>
+ * getBookList(@User() authUser: AuthUser): Promise<Book[]>
  * ```
  */
-export const AuthUser = createParamDecorator((data: any, ctx: ExecutionContext) => {
+export const User = createParamDecorator((data: any, ctx: ExecutionContext): AuthUser => {
   const req = ctx.switchToHttp().getRequest<Request>();
   return getAuthUser(req);
 });

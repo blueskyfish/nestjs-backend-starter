@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, MinLength } from 'class-validator';
+import { Equals, IsArray, IsEmail, MinLength, ValidateIf } from 'class-validator';
 
 /**
  * Register a new user.
@@ -26,6 +26,14 @@ export class RegisterPayload {
     required: true,
   })
   password: string;
+
+  @ValidateIf((o) => o.password !== o.repeat)
+  @MinLength(8)
+  @ApiProperty({
+    description: 'The user password as repeat',
+    required: true,
+  })
+  repeat: string;
 
   @IsArray()
   @ApiProperty({
