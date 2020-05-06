@@ -6,7 +6,7 @@ FROM alpine:3.5
 WORKDIR /app
 
 RUN \
-  apk add --update mysql mysql-client bash && \
+  apk add --update mysql mysql-client bash sed && \
   rm -f /var/cache/apk/*
 
 COPY my.cnf /etc/mysql/my.cnf

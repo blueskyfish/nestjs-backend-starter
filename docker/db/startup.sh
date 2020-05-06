@@ -43,6 +43,10 @@ EOF
       echo "> [info] (Starter) Creating user: $MYSQL_USER with password $MYSQL_PASSWORD"
       echo "GRANT ALL ON \`$MYSQL_DATABASE\`.* to '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" >> $tfile
     fi
+
+    # Test
+    echo "CREATE DATABASE IF NOT EXISTS \`$MYSQL_DATABASE-test\` CHARACTER SET utf8 COLLATE utf8_general_ci;" >> $tfile
+    echo "GRANT ALL ON \`$MYSQL_DATABASE-test\`.* to '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD';" >> $tfile
   fi
 
   /usr/bin/mysqld --user=root --bootstrap --verbose=0 < $tfile
@@ -52,6 +56,12 @@ EOF
   #
   cat `ls -- /sql/*.sql | sort` > /sql/all.sql
   /usr/bin/mysqld --user=root --bootstrap --verbose=0 < /sql/all.sql
+
+  echo "> [info] (Starter) Test database"
+  sed 's/`starter`/`starter-test`/g' /sql/all.sql > /sql/all-test.sql
+  /usr/bin/mysqld --user=root --bootstrap --verbose=0 < /sql/all-test.sql
+
+  echo "> [info] (Starter) Finish Test database"
 
   if [ ! -f /app/data/createDB ]; then
     echo "> [info] (Starter) create file /app/data/createDB"

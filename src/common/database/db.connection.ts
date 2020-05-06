@@ -157,6 +157,27 @@ export class DbConnection {
     }));
   }
 
+  /**
+   * Execute an query
+   * @param {string} sql
+   * @returns {Promise<any>}
+   */
+  async query(sql: string): Promise<any> {
+    const connection = await this.openConnection();
+
+    return new Promise<any>(((resolve, reject) => {
+      connection.query(sql, (err: MysqlError, result) => {
+        if (err) {
+          console.error('> Error: Action (%s) Error: query -> %s', err.code, err.message);
+          console.error('> Error: Sql:\n%s', err.sql);
+          console.error('> Error: Stack: \n%s', err.stack);
+          return reject(queryError(err));
+        }
+        resolve(result);
+      });
+    }));
+  }
+
   private async openConnection(): Promise<Connection> {
     if (this._connection) {
       return this._connection;
