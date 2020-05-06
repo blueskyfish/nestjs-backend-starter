@@ -1,3 +1,3 @@
 
-export * from './repository.open';
 export * from './repository.provider';
+export * from './repository.names';

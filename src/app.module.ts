@@ -5,12 +5,10 @@ import { DEFAULT_DB_HOST, DEFAULT_DB_PORT, EnvName } from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppAuthModule } from './auth/auth.module';
-import { AuthMiddleware } from './business/middleware';
 import { AppBusinessModule } from './business/business.module';
+import { AuthMiddleware } from './business/middleware';
 import { AppCommonModule } from './common/common.module';
-import { DbMiddleware } from './common/database/db.middleware';
 import { fromEnv } from './common/env';
-import { RequestFinishMiddleware } from './common/middleware';
 import { SecondUtil } from './common/util';
 import { LoginController } from './login.controller';
 import { RegisterController } from './register.controller';
@@ -64,10 +62,6 @@ export class AppModule implements NestModule {
     };
 
     consumer
-      .apply(RequestFinishMiddleware)
-      .forRoutes(allRoutes)
-      .apply(DbMiddleware)
-      .forRoutes(allRoutes)
       .apply(AuthMiddleware)
       .exclude(...publicRoutes)
       .forRoutes(

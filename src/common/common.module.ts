@@ -1,12 +1,8 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { DB_CONFIG_TOKEN, DbConfig, DbService, IDbConfig } from './database';
-import { DbMiddleware } from './database/db.middleware';
-import { RequestFinishMiddleware } from './middleware';
+import { DbConfig, DbService, IDbConfig } from './database';
 
 const services: any[] = [
   DbService,
-  DbMiddleware,
-  RequestFinishMiddleware,
 ];
 
 
@@ -31,7 +27,7 @@ export class AppCommonModule {
       module: AppCommonModule,
       providers: [
         {
-          provide: DB_CONFIG_TOKEN,
+          provide: DbConfig,
           useValue: new DbConfig(config),
         },
         ...services,

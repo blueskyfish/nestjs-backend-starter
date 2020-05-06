@@ -1,8 +1,8 @@
 import { Moment } from 'moment';
 import { DateUtil } from '../../common/util';
+import { IDbDeviceItem } from '../repository/device/entities';
 import {
   AuthUserDeviceStatus,
-  IDeviceItem,
   IDeviceLastAccess,
   IDeviceUpdate,
   LoaderDeviceFunc,
@@ -137,7 +137,7 @@ export class AuthUserMap {
     }
   }
 
-  private updateUserDeviceList(expiresDate: Moment, userId: number, list: IDeviceItem[]): void {
+  private updateUserDeviceList(expiresDate: Moment, userId: number, list: IDbDeviceItem[]): void {
     // user device list
     const deviceList: number[] = [];
 

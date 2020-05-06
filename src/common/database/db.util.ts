@@ -1,5 +1,4 @@
-import { Request } from 'express';
-import { DbConnection } from './db.connection';
+import * as _ from 'lodash';
 
 export class DbUtil {
 
@@ -14,11 +13,21 @@ export class DbUtil {
       .replace(/-/g, sign);
   }
 
-  static getConnection(req: Request): DbConnection {
-    return (req as any).dbConn || null;
-  }
-
-  static setConnection(req: Request, conn: DbConnection): void {
-    (req as any).dbConn = conn;
+  /**
+   * Get the value
+   *
+   * @param {T} defValue the default value
+   * @param {T} value the value
+   * @param {T} min the min value
+   * @returns {T} the value
+   */
+  static getValue<T>(defValue: T, value?: T, min?: T): T {
+    if (_.isNil(value)) {
+      return defValue;
+    }
+    if (!_.isNil(min) && value < min) {
+      return min;
+    }
+    return value;
   }
 }

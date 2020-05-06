@@ -1,5 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { IBusinessConfig } from './business.config';
+import { BusinessService } from './business.service';
 import { BusinessSettings } from './business.settings';
 import { AuthMiddleware, AuthUserService } from './middleware';
 import { NameGeneratorService } from './service';
@@ -15,6 +16,7 @@ const globalServices: any[] = [
 
 // Her are only services for internal using.
 const internalServices: any[] = [
+  BusinessService,
 ];
 
 @Module({

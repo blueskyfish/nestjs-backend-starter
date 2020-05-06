@@ -4,11 +4,10 @@ import { API_KEY_STARTER, AuthUser } from './auth/';
 import { UserInfo } from './business/entities';
 import { User } from './business/middleware';
 import { UserService } from './business/user';
-import { DbConn, DbConnection } from './common/database';
 import { ErrorBody } from './common/error';
 
 /**
- * The user controller without `login` and `register`
+ * The user controller manages the current user.
  */
 @ApiTags('User')
 @Controller('/user')
@@ -31,7 +30,7 @@ export class UserController {
     type: ErrorBody,
   })
   @Get('/info')
-  async getInfo(@DbConn() conn: DbConnection, @User() authUser: AuthUser): Promise<UserInfo> {
-    return this.userService.getInfo(conn, authUser);
+  async getInfo(@User() authUser: AuthUser): Promise<UserInfo> {
+    return this.userService.getInfo(authUser);
   }
 }

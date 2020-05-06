@@ -1,4 +1,5 @@
 import { Moment } from 'moment';
+import { IDbDeviceItem } from '../repository/device/entities';
 
 /**
  * The result of check the device
@@ -69,15 +70,8 @@ export interface IDeviceUpdate extends IDeviceLastAccess {
  */
 export const to = (state: DeviceSaveState, lastAccess: Moment, userId: number): IDeviceLastAccess => ( {state, lastAccess, userId } );
 
-/**
- * Record of the device id and last access from an user
- */
-export interface IDeviceItem {
-  deviceId: number;
-  lastAccess: Date | string;
-}
 
 /**
  * Loader callback for get the list of devices and its last access from the given user.
  */
-export type LoaderDeviceFunc = (userId: number) => Promise<IDeviceItem[]>
+export type LoaderDeviceFunc = (userId: number) => Promise<IDbDeviceItem[]>

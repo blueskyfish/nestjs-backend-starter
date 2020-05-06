@@ -20,12 +20,11 @@ export class AuthMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction): Promise<any> {
 
     const token = req.header(HTTP_AUTH_HEADER);
-    const conn = DbUtil.getConnection(req);
 
-    if (ValidUtil.notEmpty(token) && conn) {
+    if (ValidUtil.notEmpty(token)) {
       try {
 
-        const authUser = await this.authUserCache.verifyAndBuildAuthUser(conn, token);
+        const authUser = await this.authUserCache.verifyAndBuildAuthUser(token);
         updateRequest(req, authUser);
 
       } catch (e) {
