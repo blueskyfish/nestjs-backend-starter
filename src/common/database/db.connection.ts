@@ -2,6 +2,9 @@ import * as _ from 'lodash';
 import { Connection, MysqlError, Pool, PoolConnection } from 'mysql';
 import { connectError, queryError, transactionError } from './db.error';
 
+// Kind of execution
+type ExecutionAction = 'select' | 'insert' | 'update' | 'delete' | 'query';
+
 /**
  * The database connection executes sql statements and returns the entities.
  *
@@ -11,6 +14,7 @@ import { connectError, queryError, transactionError } from './db.error';
  * * `insert` should execute an insert statement (e.g. `INSERT INTO ...`) and it the return the new id of the entity
  * * `update` should execute an update statement (e.g. `UPDATE ...`) and it returns the changed rows.
  * * `delete` should execute a delete statement (e.g. `DELETE FROM ...`) and it returns the affected rows,
+ * * `query` executes an raw sql statement und returns the result in case of success.
  *
  * **There are transaction handling**
  * * `startTransaction` is start a sql transaction
@@ -20,7 +24,8 @@ import { connectError, queryError, transactionError } from './db.error';
 export class DbConnection {
   private _connection: PoolConnection = null;
 
-  constructor(private _pool: Pool) {}
+  constructor(private _pool: Pool) {
+  }
 
   /**
    * Starts the transaction, that must be closed with `commit` or `rollback`.
@@ -29,7 +34,7 @@ export class DbConnection {
    */
   startTransaction(): Promise<void> {
     return this.openConnection()
-      .then (() => {
+      .then(() => {
         return new Promise<void>((resolve, reject) => {
           this._connection.beginTransaction((err: MysqlError) => {
             if (err) {
@@ -37,7 +42,7 @@ export class DbConnection {
               return reject(transactionError(err));
             }
             resolve();
-          })
+          });
         });
       });
   }
@@ -71,7 +76,7 @@ export class DbConnection {
         }
         resolve(true);
       });
-    })
+    });
   }
 
   /**
@@ -140,7 +145,18 @@ export class DbConnection {
     return _.get(result, 'affectedRows', NaN);
   }
 
-  private async execute(action: 'select' | 'insert' | 'update' | 'delete', sql: string, values: any = {}): Promise<any> {
+  /**
+   * Send a sql query to the database an return the result.
+   * It is for execute sql command like `truncate` or `show tables`...
+   *
+   * @param {string} sql the sql statement
+   * @returns {Promise<any>} the result of the successful execution
+   */
+  async query(sql: string): Promise<any> {
+    return await this.execute('query', sql);
+  }
+
+  private async execute(action: ExecutionAction, sql: string, values?: any): Promise<any> {
 
     const connection = await this.openConnection();
 
@@ -148,27 +164,6 @@ export class DbConnection {
       connection.query(sql, values, (err: MysqlError, result) => {
         if (err) {
           console.error('> Error: Action (%s) Error: %s -> %s', action, err.code, err.message);
-          console.error('> Error: Sql:\n%s', err.sql);
-          console.error('> Error: Stack: \n%s', err.stack);
-          return reject(queryError(err));
-        }
-        resolve(result);
-      });
-    }));
-  }
-
-  /**
-   * Execute an query
-   * @param {string} sql
-   * @returns {Promise<any>}
-   */
-  async query(sql: string): Promise<any> {
-    const connection = await this.openConnection();
-
-    return new Promise<any>(((resolve, reject) => {
-      connection.query(sql, (err: MysqlError, result) => {
-        if (err) {
-          console.error('> Error: Action (%s) Error: query -> %s', err.code, err.message);
           console.error('> Error: Sql:\n%s', err.sql);
           console.error('> Error: Stack: \n%s', err.stack);
           return reject(queryError(err));
