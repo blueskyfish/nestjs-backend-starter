@@ -161,6 +161,27 @@ export DB_PASSWORD=xxxx
 export AUTH_SECRET=yyyy
 ```
 
+
+## Request and Response Cycle
+
+> Here is described how the request and response cycle works
+
+
+### Overview
+
+![Request and Response Cycle](assets/request-response-cycle.png)
+
+
+### Description
+
+* A Request receives the backend controller
+* The controller forwards the request to the service
+* The service use the business to create a repository and process the specified steps and returns the response
+* The business service close the repository
+* If no error has occurred the response will send to the client
+* In case of an error the error body will send to the client.
+
+
 ## Authorization & Authentication
 
 The protected endpoints require a logged in user. Here is a description of how a user logs on first, gets an authorization token and uses it for a protected endpoint.
