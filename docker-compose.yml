@@ -15,7 +15,7 @@ services:
     ports:
       - "17306:3306"
     env_file:
-      - docker.env
+      - docker-compose.env
   admin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: backend_starter_admin
@@ -24,4 +24,4 @@ services:
     links:
       - db:db
     env_file:
-      - docker.env
+      - docker-compose.env

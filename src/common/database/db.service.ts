@@ -36,12 +36,12 @@ export class DbService implements OnApplicationShutdown {
       user: config.user,
       password: config.password,
       database: config.database,
-      connectTimeout: DbUtil.getValue(20000, null), // TODO Add "connectTimeout" to Configuration
+      connectTimeout: config.connectTimeout,
       connectionLimit: config.connectLimit,
-      acquireTimeout: DbUtil.getValue(20000,), // TODO Add "acquireTimeout" to Configuration
-      waitForConnections: DbUtil.getValue(true, null), // TODO Add "waitForConnections" to Configuration
+      acquireTimeout: config.acquireTimeout,
+      waitForConnections: config.waitForConnections,
       // If set to 0, there is no limit to the number of queued connection requests. (Default: 0)
-      queueLimit: DbUtil.getValue(0, 0, 0), // Add "queueLimit" to Configuration
+      queueLimit: config.queueLimit,
 
       // escapes the query parameters
       queryFormat: (query, values) => {
@@ -78,7 +78,7 @@ export class DbService implements OnApplicationShutdown {
     this._pool.on('enqueue', (err: MysqlError) => this.handleEnqueueError(err));
 
     this._pool.on('connection', (conn: PoolConnection) => {
-      console.info('> Info: get connection [%s]', conn.threadId);
+      console.info('> Info: connection [%s] requested', conn.threadId);
     });
 
     this._pool.on('release', (conn: PoolConnection) => {
@@ -150,12 +150,14 @@ export class DbService implements OnApplicationShutdown {
   }
 
   private handleEnqueueError(err: MysqlError): void {
-    const code = DbUtil.adjustAndLower(err.code, '.');
-    const message = err.sqlMessage;
-    const sql = err.sql;
-    console.error('> Error: %s => %s\n%s\n-----', code, message, sql);
+    if (err) {
+      const code = DbUtil.adjustAndLower(err.code, '.');
+      const message = err.sqlMessage;
+      const sql = err.sql;
+      console.error('> Error: %s => %s\n%s\n-----', code, message, sql);
 
-    const count = this.errorCounter.get(code) || 0;
-    this.errorCounter.set(code, count + 1);
+      const count = this.errorCounter.get(code) || 0;
+      this.errorCounter.set(code, count + 1);
+    }
   }
 }

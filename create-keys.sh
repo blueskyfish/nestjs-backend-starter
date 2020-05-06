@@ -15,7 +15,7 @@ if [ -f $PRI_FILENAME ]; then
   rm -f $PRI_FILENAME
 fi
 
-# generates the private key with 2046 bits
+# generates the private key with 2048 bits
 openssl genrsa -out $PRI_FILENAME 2048
 
 # check, whether a former file of the public key exist and if it exists, then will be deleted it
