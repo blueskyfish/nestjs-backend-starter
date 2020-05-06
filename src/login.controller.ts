@@ -2,7 +2,6 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginPayload, LoginUser } from './business/entities';
 import { UserService } from './business/user';
-import { DbConn, DbConnection } from './common/database';
 import { ErrorBody } from './common/error';
 
 /**
@@ -28,7 +27,7 @@ export class LoginController {
     type: ErrorBody
   })
   @Post('/login')
-  async login(@DbConn() conn: DbConnection, @Body() payload: LoginPayload): Promise<LoginUser> {
-    return await this.userService.login(conn, payload);
+  async login(@Body() payload: LoginPayload): Promise<LoginUser> {
+    return await this.userService.login(payload);
   }
 }

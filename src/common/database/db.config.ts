@@ -4,13 +4,6 @@
  */
 export const NULL_VALUE = 'NULL';
 
-/**
- * The provider token for the database configuration
- *
- * TODO Adjust the token name
- */
-export const DB_CONFIG_TOKEN = 'nestjs.backend.common.dbConfig';
-
 export const NL = '\n';
 
 /**

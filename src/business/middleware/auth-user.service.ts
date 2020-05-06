@@ -1,26 +1,18 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
-import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
-import { AuthUser } from '../../auth/auth.user';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { AuthUser } from '../../auth';
 import { VerifierService } from '../../auth/verifier';
-import { DbConnection, DbService } from '../../common/database';
 import { CommonError } from '../../common/error';
-import { asyncForEach, DateUtil, SecondUtil } from '../../common/util';
+import { asyncForEach, DateUtil } from '../../common/util';
+import { BusinessService } from '../business.service';
 import { BusinessSettings } from '../business.settings';
 import { AuthError } from '../errors';
+import { RepositoryProvider } from '../repository';
+import { DeviceRepository } from '../repository/device';
+import { IDbDeviceItem } from '../repository/device/entities';
 import { AuthUserMap } from './auth-user.map';
-import {
-  AuthUserDeviceStatus,
-  IDeviceItem,
-  IDeviceLastAccess,
-  IDeviceUpdate,
-  LoaderDeviceFunc
-} from './auth-user.models';
-import {
-  SQL_DELETE_DEVICE,
-  SQL_DELETE_EXPIRED_DEVICES,
-  SQL_SELECT_USER_DEVICE_LIST,
-  SQL_UPDATE_DEVICE
-} from './auth-user.sql';
+import { AuthUserDeviceStatus, IDeviceUpdate, LoaderDeviceFunc, } from './auth-user.models';
+
 
 /**
  * The service use the auth user from the token and verified the user and the device.
@@ -32,7 +24,11 @@ export class AuthUserService {
 
   private readonly authUserMap: AuthUserMap;
 
-  constructor(private settings: BusinessSettings, private verifier: VerifierService, private dbService: DbService) {
+  constructor(
+    private settings: BusinessSettings,
+    private business: BusinessService,
+    private verifier: VerifierService,
+  ) {
     this.authUserMap = new AuthUserMap(settings.deviceExpires);
   }
 
@@ -44,12 +40,11 @@ export class AuthUserService {
    * Verifies and builds the auth user. First it is extract the auth user from the token and then verified the
    * last access of the user device.
    *
-   * @param {DbConnection} conn the connection
    * @param {string} token the http header token.
    * @returns {Promise<AuthUser>} the auth user
    * @throws AuthError
    */
-  async verifyAndBuildAuthUser(conn: DbConnection, token: string): Promise<AuthUser> {
+  async verifyAndBuildAuthUser(token: string): Promise<AuthUser> {
 
     let authUser: AuthUser = null;
 
@@ -62,19 +57,22 @@ export class AuthUserService {
       throw new AuthError('access', 'No access available');
     }
 
-    // check user with device => status !== "okay" => AuthError
-    const status = await this.authUserMap.checkDevice(authUser.id, authUser.device, this.loaderDevice(conn));
-    if (status !== AuthUserDeviceStatus.Okay) {
-      console.warn('> Warn: User %s (d=%s) Status =>', authUser.id, authUser.device, status);
-      throw new AuthError(status as string, 'Unauthorized access');
-    }
 
-    return authUser;
+    // check user with device => status !== "okay" => AuthError
+    return await this.business.openRepository(async (rep: RepositoryProvider) => {
+
+      const status = await this.authUserMap.checkDevice(authUser.id, authUser.device, this.loaderDevice(rep.device));
+      if (status !== AuthUserDeviceStatus.Okay) {
+        console.warn('> Warn: User %s (d=%s) Status =>', authUser.id, authUser.device, status);
+        throw new AuthError(status as string, 'Unauthorized access');
+      }
+
+      return authUser;
+    });
   }
 
   @Cron(CronExpression.EVERY_5_MINUTES, {name: 'AuthUserService.saveLastAccess'})
   async saveDeviceLastAccess(): Promise<void> {
-    const conn = this.dbService.getConnection();
     console.debug('> Debug: [%s] Start to save from device list', DateUtil.formatTimestamp());
 
     const deviceList = this.authUserMap.getUpdatingDeviceList();
@@ -82,46 +80,38 @@ export class AuthUserService {
       console.debug('> Debug: Nothing to save from the device list');
     }
 
-    try {
+    return this.business.openRepository(async (rep: RepositoryProvider) => {
 
-      await conn.startTransaction();
+      await rep.startTransaction();
 
-      await asyncForEach(deviceList, async (value: IDeviceUpdate) => {
+      try {
 
-        const updateValues = {
-          deviceId: value.deviceId,
-          lastAccess: DateUtil.formatTimestamp(value.lastAccess)
-        };
-        let no: number = -1;
+        await asyncForEach(deviceList, async (value: IDeviceUpdate) => {
 
-        switch (value.state) {
-          case 'modified':
-            console.debug('> Debug: Update device %s => %s', updateValues.deviceId, updateValues.lastAccess);
-            no = await conn.update(SQL_UPDATE_DEVICE, updateValues);
-            console.log('> Trace: Changed %s rows', no);
-            break;
-          case 'deleting':
-            console.debug('> Debug: Delete device %s', updateValues.deviceId);
-            no = await conn.delete(SQL_DELETE_DEVICE, updateValues);
-            console.log('> Trace: Affected %s rows', no);
-            break;
-          default:
-            console.warn('> Warn: device state "%s" is not handle (user %s, device %s => %s)',
-              value.state, value.userId, value.deviceId, DateUtil.formatTimestamp(value.lastAccess)
-            );
-            break;
-        }
-      });
+          switch (value.state) {
+            case 'modified':
+              await rep.device.updateDeviceLastAccess(value.deviceId, value.lastAccess);
+              break;
+            case 'deleting':
+              await rep.device.deleteDevice(value.deviceId);
+              break;
+            default:
+              console.warn('> Warn: device state "%s" is not handle (user %s, device %s => %s)',
+                value.state, value.userId, value.deviceId, DateUtil.formatTimestamp(value.lastAccess)
+              );
+              break;
+          }
+        });
 
-      await conn.commit();
+        await rep.commit();
 
-    } catch (e) {
-      await conn.rollback();
-      console.error('> Error: Has occurred by save last of user devices (message=%s)', e.message);
-    } finally {
-      conn.release();
-      console.debug('> Debug: [%s] Finish to save the lastAccess', DateUtil.formatTimestamp());
-    }
+      } catch (e) {
+        await rep.rollback();
+        console.error('> Error: Has occurred by save last of user devices (message=%s)', e.message);
+      } finally {
+        console.debug('> Debug: [%s] Finish to save the lastAccess', DateUtil.formatTimestamp());
+      }
+    });
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES, {name: 'AuthUserService.deleteExpiredDevices'})
@@ -130,31 +120,28 @@ export class AuthUserService {
     const expiresDate = this.authUserMap.getExpiresDate();
     console.debug('> Debug: [%s] Start delete expired devices', DateUtil.formatTimestamp());
 
-    const conn = this.dbService.getConnection();
-    try {
+    return this.business.openRepository(async (rep: RepositoryProvider) => {
+      try {
 
-      await conn.startTransaction();
+        await rep.startTransaction();
 
-      const deleteValues = {
-        expiresDate: DateUtil.formatTimestamp(expiresDate)
-      };
-      const affectedRows = await conn.delete(SQL_DELETE_EXPIRED_DEVICES, deleteValues);
+        const affectedRows = await rep.device.deleteExpiredDevices(expiresDate);
+        await rep.commit();
 
-      await conn.commit();
+        console.info('> Info: Delete expired devices %s rows', affectedRows);
 
-      console.info('> Info: Delete expired devices %s rows', affectedRows);
-    } catch (e) {
-      await conn.rollback();
-      console.error('> Error: Expired devices failed to delete (%s)', e.message);
-    } finally {
-      conn.release();
-      console.debug('> Debug: [%s] Finish to delete expired devices', DateUtil.formatTimestamp());
-    }
+      } catch (e) {
+        await rep.rollback();
+        console.error('> Error: Expired devices failed to delete (%s)', e.message);
+      } finally {
+        console.debug('> Debug: [%s] Finish to delete expired devices', DateUtil.formatTimestamp());
+      }
+    });
   }
 
-  private loaderDevice(conn: DbConnection): LoaderDeviceFunc {
-    return async (userId: number): Promise<IDeviceItem[]> => {
-      return conn.select<IDeviceItem>(SQL_SELECT_USER_DEVICE_LIST, {userId});
+  private loaderDevice(device: DeviceRepository): LoaderDeviceFunc {
+    return async (userId: number): Promise<IDbDeviceItem[]> => {
+      return await device.getDeviceItemList(userId);
     };
   }
 }
