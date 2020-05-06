@@ -16,10 +16,10 @@ jest.setTimeout(40*1000);
 
 describe('VerifierService', () => {
 
-  let keeperService: TokenService = null;
+  let tokenService: TokenService = null;
   let authService: VerifierService = null;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
 
     const priKeyFilename = 'test-private.pem';
     const pubKeyFilename = 'test-public.pem';
@@ -36,7 +36,7 @@ describe('VerifierService', () => {
       ]
     }).compile();
 
-    keeperService = app.get(TokenService);
+    tokenService = app.get(TokenService);
     authService = app.get(VerifierService);
 
   });
@@ -47,7 +47,7 @@ describe('VerifierService', () => {
 
     beforeEach(() => {
 
-      token = keeperService.from(4711, 23456, ['admin', 'reader', 'backup']);
+      token = tokenService.from(4711, 23456, ['admin', 'reader', 'backup']);
 
     });
 
