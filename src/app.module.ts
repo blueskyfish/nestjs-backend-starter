@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { RouteInfo } from '@nestjs/common/interfaces';
 import { ScheduleModule } from '@nestjs/schedule';
-import { DEFAULT_DB_HOST, DEFAULT_DB_PORT, EnvName } from './app.config';
+import { EnvName } from './app.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AppAuthModule } from './auth/auth.module';
@@ -29,12 +29,16 @@ const controllers: any[] = [
     ScheduleModule.forRoot(),
 
     AppCommonModule.forRoot({
-      host: fromEnv(EnvName.DbHost).asString || DEFAULT_DB_HOST,
-      port: fromEnv(EnvName.DbPort).asNumber || DEFAULT_DB_PORT,
+      host: fromEnv(EnvName.DbHost).asString ,
+      port: fromEnv(EnvName.DbPort).asNumber,
       user: fromEnv(EnvName.DbUser).asString,
       database: fromEnv(EnvName.DbDatabase).asString,
       password: fromEnv(EnvName.DbPassword).asString,
-      connectLimit: 20, // TODO Environment variable
+      connectTimeout: fromEnv(EnvName.DbConnectTimeout).asNumber,
+      connectLimit: fromEnv(EnvName.DbConnectLimit).asNumber,
+      acquireTimeout: fromEnv(EnvName.DbAcquireTimeout).asNumber,
+      waitForConnections: fromEnv(EnvName.DbWaitForConnections).asBool,
+      queueLimit: fromEnv(EnvName.DbQueueLimit).asNumber,
     }),
     AppAuthModule.forRoot({
       priKeyFilename: fromEnv(EnvName.AuthPriFile).asString,

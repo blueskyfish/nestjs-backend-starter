@@ -23,6 +23,19 @@ export class EnvValue {
     return NumberUtil.toInt(this.value);
   }
 
+  get asBool(): boolean {
+    if (this.value === 'true') {
+      return true;
+    } else if (this.value === 'false') {
+      return false;
+    }
+    const no = NumberUtil.toInt(this.value);
+    if (isNaN(no)) {
+      return null;
+    }
+    return no > 0;
+  }
+
   get hasValue(): boolean {
     return !!this.value;
   }

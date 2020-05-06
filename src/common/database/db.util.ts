@@ -21,12 +21,15 @@ export class DbUtil {
    * @param {T} min the min value
    * @returns {T} the value
    */
-  static getValue<T>(defValue: T, value?: T, min?: T): T {
-    if (_.isNil(value)) {
+  static getValue<T>(defValue: T, value?: T, min?: number): T {
+    const isNumber = typeof defValue === 'number';
+    const isString = typeof defValue === 'string';
+
+    if (_.isNil(value) || (isNumber && isNaN(value as any))) {
       return defValue;
     }
-    if (!_.isNil(min) && value < min) {
-      return min;
+    if (!_.isNil(min) && isNumber && ((value as any) < min)) {
+      return min as any;
     }
     return value;
   }
