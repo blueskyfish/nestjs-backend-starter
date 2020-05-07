@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as _ from 'lodash';
 import { DEFAULT_HOST, EnvName } from './app.config';
 import { AppModule } from './app.module';
-import { API_KEY_NAME, API_KEY_STARTER, HTTP_AUTH_HEADER } from './auth';
+import { API_KEY_NAME, HTTP_AUTH_HEADER } from './auth';
 import { fromEnv } from './common/env';
 import { BootstrapError, ErrorHandlerFilter, ValidError } from './common/error';
 
