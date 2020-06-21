@@ -2,7 +2,6 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { HTTP_AUTH_HEADER } from '../../auth';
 import { ValidUtil } from '../../auth/util';
-import { DbUtil } from '../../common/database';
 import { AuthError } from '../errors';
 import { updateRequest } from './auth-middleware.util';
 import { AuthUserService } from './auth-user.service';
