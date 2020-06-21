@@ -4,9 +4,9 @@ const ONE_HOUR = 60 * ONE_MINUTE;
 const ONE_DAY = 24 * ONE_HOUR;
 
 /**
- * Manages the seconds
+ * Manages the timestamps
  */
-export class SecondUtil {
+export class TimeUtil {
 
   /**
    * The current seconds since January 1, 1970 00:00:00 UTC
@@ -26,10 +26,10 @@ export class SecondUtil {
    * @returns {number} the seconds from now plus delta
    */
   static fromNow(minutes: number, hours: number = 0, days: number = 0): number {
-    return SecondUtil.now() +
-      SecondUtil.fromMinutes(minutes) +
-      SecondUtil.fromHours(hours) +
-      SecondUtil.fromDays(days);
+    return TimeUtil.now() +
+      TimeUtil.fromMinutes(minutes) +
+      TimeUtil.fromHours(hours) +
+      TimeUtil.fromDays(days);
   }
 
   /**

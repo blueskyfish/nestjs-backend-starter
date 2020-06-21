@@ -9,7 +9,7 @@ import { AppBusinessModule } from './business/business.module';
 import { AuthMiddleware } from './business/middleware';
 import { AppCommonModule } from './common/common.module';
 import { fromEnv } from './common/env';
-import { SecondUtil } from './common/util';
+import { TimeUtil } from './common/util';
 import { LoginController } from './login.controller';
 import { RegisterController } from './register.controller';
 import { UserController } from './user.controller';
@@ -45,7 +45,7 @@ const controllers: any[] = [
       pubKeyFilename: fromEnv(EnvName.AuthPubFile).asString,
     }),
     AppBusinessModule.forRoot({
-      deviceExpires: SecondUtil.fromMinutes(fromEnv(EnvName.AuthExpires).asNumber || 7),
+      deviceExpires: TimeUtil.fromMinutes(fromEnv(EnvName.AuthExpires).asNumber || 7),
     }),
   ],
   controllers: [

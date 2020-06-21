@@ -139,7 +139,7 @@ module.exports = {
         'DB_DATABASE': 'databaseName',
         'DB_PASSWORD': dbPassword,
         'AUTH_SECRET': authSecret,
-        'AUTH_EXPIRES': SecondUtil.fromDays(7),
+        'AUTH_EXPIRES': TimeUtil.fromDays(7),
       },
       listen_timeout: 5000,
       kill_timeout: 2000,
