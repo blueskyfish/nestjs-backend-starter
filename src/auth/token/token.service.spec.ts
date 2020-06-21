@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { SecondUtil } from '../../common/util';
+import { TimeUtil } from '../../common/util';
 import { CRYPTO_CONFIG } from '../crypto';
 import { cryptoFactory } from '../crypto/crypto.factory';
 import { CryptoService } from '../crypto/crypto.service';

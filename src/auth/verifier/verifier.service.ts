@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import { SecondUtil } from '../../common/util';
+import { TimeUtil } from '../../common/util';
 import { ValidUtil } from '../util';
 import { VerifierError } from './verifier.error';
 import { AuthUser, IAuthData } from '../auth.user';
