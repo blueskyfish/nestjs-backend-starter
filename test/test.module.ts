@@ -6,7 +6,7 @@ import { AppAuthModule } from '../src/auth/auth.module';
 import { AppBusinessModule } from '../src/business/business.module';
 import { AuthMiddleware } from '../src/business/middleware';
 import { AppCommonModule } from '../src/common/common.module';
-import { SecondUtil } from '../src/common/util';
+import { TimeUtil } from '../src/common/util';
 import { LoginController } from '../src/login.controller';
 import { RegisterController } from '../src/register.controller';
 import { UserController } from '../src/user.controller';
@@ -37,7 +37,7 @@ import {
       pubKeyFilename: TEST_AUTH_PUB_FILENAME,
     }),
     AppBusinessModule.forRoot({
-      deviceExpires: SecondUtil.fromMinutes(2),
+      deviceExpires: TimeUtil.fromMinutes(2),
     }),
   ],
   controllers: [
