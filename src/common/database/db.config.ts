@@ -1,9 +1,9 @@
+import { DbUtil } from './db.util';
+
 /**
  * The `null` value in a sql statement
  * @type {string}
  */
-import { DbUtil } from './db.util';
-
 export const NULL_VALUE = 'NULL';
 
 export const NL = '\n';

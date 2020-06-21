@@ -1,7 +1,10 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { DbConfig, DbService, IDbConfig } from './database';
 
-const services: any[] = [
+const commonServices: any[] = [
+  // Logger <https://docs.nestjs.com/techniques/logger>
+  Logger,
+
   DbService,
 ];
 
@@ -22,18 +25,23 @@ export class AppCommonModule {
    * @returns {DynamicModule}
    */
   static forRoot(config: IDbConfig): DynamicModule {
+
+    const providers: any[] = [
+      {
+        provide: DbConfig,
+        useValue: new DbConfig(config),
+      },
+    ];
     return {
       global: true,
       module: AppCommonModule,
       providers: [
-        {
-          provide: DbConfig,
-          useValue: new DbConfig(config),
-        },
-        ...services,
+        ...providers,
+        ...commonServices,
       ],
       exports: [
-        ...services,
+        ...providers,
+        ...commonServices,
       ],
     };
   }

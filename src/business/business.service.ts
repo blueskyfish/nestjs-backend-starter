@@ -25,6 +25,7 @@ export class BusinessService {
     try {
       return await processFunc(rep);
     } catch (e) {
+
       if (e instanceof CommonError) {
         // error is an instance of CommonError
         throw e;
