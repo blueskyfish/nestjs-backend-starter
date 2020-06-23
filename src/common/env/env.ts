@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { NumberUtil } from '../util';
 
 /**
@@ -23,10 +24,18 @@ export class EnvValue {
     return NumberUtil.toInt(this.value);
   }
 
+  /**
+   * Returns the value as boolean. If the result is null, then it could not interpreted as boolean
+   *
+   * @returns {boolean} return a boolean or `null`
+   */
   get asBool(): boolean {
-    if (this.value === 'true') {
+    if (_.isNil(this.value)) {
+      return null;
+    }
+    if (_.toLower(this.value) === 'true') {
       return true;
-    } else if (this.value === 'false') {
+    } else if (_.toLower(this.value) === 'false') {
       return false;
     }
     const no = NumberUtil.toInt(this.value);
