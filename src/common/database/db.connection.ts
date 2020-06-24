@@ -39,7 +39,7 @@ export class DbConnection {
         return new Promise<void>((resolve, reject) => {
           this._connection.beginTransaction((err: MysqlError) => {
             if (err) {
-              this.logger.warn(`Begin Transaction Error: ${err.code} -> ${err.message}`);
+              this.logger.warn(`Begin Transaction Error: ${err.errno} -> ${err.message}`);
               return reject(transactionError(err));
             }
             resolve();
@@ -186,8 +186,8 @@ export class DbConnection {
     return new Promise<PoolConnection>(((resolve, reject) => {
       this._pool.getConnection(((err: MysqlError, connection: PoolConnection) => {
         if (err) {
-          this.logger.error(`Conn Error: ${err.code} -> ${err.message}`);
-          reject(connectError(err));
+          this.logger.error(`Conn Error: ${err.errno} -> ${err.message}`);
+          return reject(connectError(err));
         }
         resolve(connection);
       }));
