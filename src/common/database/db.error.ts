@@ -15,13 +15,6 @@ export class DbError extends CommonError {
   }
 }
 
-/**
- * @deprecated
- */
-export const startTransactionError = (message): DbError => {
-  return new DbError('db.startTransaction', message);
-};
-
 export const transactionError = (err: MysqlError): DbError => {
   const code = DbUtil.adjustAndLower(err.code, '.');
   const message = err.sqlMessage;
