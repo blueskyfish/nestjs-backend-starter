@@ -1,10 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { DEFAULT_DB_HOST } from '../src/app.config';
+import { AuthMiddleware } from '../src/auth/user';
+import { DEFAULT_DB_HOST } from '../src/common/database';
 import { SystemController } from '../src/controller/system.controller';
 import { SystemService } from '../src/business/system/system.service';
 import { AppAuthModule } from '../src/auth/auth.module';
 import { AppBusinessModule } from '../src/business/business.module';
-import { AuthMiddleware } from '../src/business/middleware';
 import { AppCommonModule } from '../src/common/common.module';
 import { TimeUtil } from '../src/common/util';
 import { LoginController } from '../src/controller/login.controller';
@@ -36,9 +36,7 @@ import {
       priKeyFilename: TEST_AUTH_PRI_FILENAME,
       pubKeyFilename: TEST_AUTH_PUB_FILENAME,
     }),
-    AppBusinessModule.forRoot({
-      deviceExpires: TimeUtil.fromMinutes(2),
-    }),
+    AppBusinessModule,
   ],
   controllers: [
     SystemController,
