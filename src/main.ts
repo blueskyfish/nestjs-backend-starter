@@ -50,12 +50,12 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, options);
 
-  // The OpenAP UI is available under http://$host:$port/openapi
-  SwaggerModule.setup('openapi', app, document);
+  // The OpenAP UI is available under http://$host:$port/openapi-ui
+  SwaggerModule.setup('openapi-ui', app, document);
   // The OpenAPI document is available under GET: http://$host:$port/openapi.json
   app.use('/openapi.json', (req, res, next) => {
     if (_.toUpper(req.method) === 'GET') {
-      return res.send(document)
+      return res.send(document);
     }
     next(new NotFoundException());
   });

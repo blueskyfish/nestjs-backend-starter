@@ -1,12 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { AppController } from '../src/app.controller';
-import { AppModule } from '../src/app.module';
-import { AuthMiddleware } from '../src/business/middleware';
 import { TestModule } from './test.module';
 
-describe('AppController (e2e)', () => {
+describe('SystemController (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {

@@ -2,24 +2,13 @@ import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/c
 import { RouteInfo } from '@nestjs/common/interfaces';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EnvName } from './app.config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { AppAuthModule } from './auth/auth.module';
-import { AppBusinessModule } from './business/business.module';
-import { AuthMiddleware } from './business/middleware';
+import { AuthMiddleware } from './auth/user';
 import { AppCommonModule } from './common/common.module';
 import { fromEnv } from './common/env';
-import { TimeUtil } from './common/util';
-import { LoginController } from './login.controller';
-import { RegisterController } from './register.controller';
-import { UserController } from './user.controller';
+import { AppControllerModule } from './controller/controller.module';
+import { UserController } from './controller/user.controller';
 
-const controllers: any[] = [
-  AppController,
-  LoginController,
-  RegisterController,
-  UserController,
-];
 
 /**
  * Application module
@@ -44,16 +33,8 @@ const controllers: any[] = [
       priKeyFilename: fromEnv(EnvName.AuthPriFile).asString,
       pubKeyFilename: fromEnv(EnvName.AuthPubFile).asString,
     }),
-    AppBusinessModule.forRoot({
-      deviceExpires: TimeUtil.fromMinutes(fromEnv(EnvName.AuthExpires).asNumber || 7),
-    }),
+    AppControllerModule,
   ],
-  controllers: [
-    ...controllers,
-  ],
-  providers: [
-    AppService
-  ]
 })
 export class AppModule implements NestModule {
 

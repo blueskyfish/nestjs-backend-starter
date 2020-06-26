@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { Response } from 'supertest';
 import { HTTP_AUTH_HEADER } from '../src/auth';
-import { RegisterPayload } from '../src/business/entities';
+import { RegisterPayload } from '../src/business/user/entities';
 import { DbService } from '../src/common/database';
 import { TestModule } from './test.module';
 
