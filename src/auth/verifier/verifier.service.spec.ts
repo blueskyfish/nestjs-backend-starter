@@ -1,23 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CRYPTO_CONFIG } from '../crypto';
+import { CryptoConfig } from '../crypto';
 import { cryptoFactory } from '../crypto/crypto.factory';
 import { CryptoService } from '../crypto/crypto.service';
 import { VerifierError } from './verifier.error';
 import { VerifierService } from './verifier.service';
 import { TokenService } from '../token';
 
-const sleep = async (seconds: number): Promise<void> => {
-  return new Promise((resolve => {
-    setTimeout(() => resolve(), seconds * 1000);
-  }));
-}
-
-jest.setTimeout(40*1000);
 
 describe('VerifierService', () => {
 
   let tokenService: TokenService = null;
-  let authService: VerifierService = null;
+  let verifierService: VerifierService = null;
 
   beforeAll(async () => {
 
@@ -30,14 +23,14 @@ describe('VerifierService', () => {
         TokenService,
         VerifierService,
         {
-          provide: CRYPTO_CONFIG,
+          provide: CryptoConfig,
           useFactory: async () => await cryptoFactory(priKeyFilename, pubKeyFilename),
         }
       ]
     }).compile();
 
     tokenService = app.get(TokenService);
-    authService = app.get(VerifierService);
+    verifierService = app.get(VerifierService);
 
   });
 
@@ -47,13 +40,13 @@ describe('VerifierService', () => {
 
     beforeEach(() => {
 
-      token = tokenService.from(4711, 23456, ['admin', 'reader', 'backup']);
+      token = tokenService.from(4711, ['admin', 'reader', 'backup']);
 
     });
 
     it('should return "AuthUser"', () => {
 
-      const authUser = authService.fromToken(token);
+      const authUser = verifierService.fromToken(token);
       expect(authUser).not.toBeNull();
       expect(authUser.id).toEqual(4711);
       expect(authUser.hasRole('admin')).toBeTruthy();
@@ -62,16 +55,39 @@ describe('VerifierService', () => {
 
     it('should run into "notFound" exception with null', () => {
       expect(() => {
-        authService.fromToken(null);
+        verifierService.fromToken(null);
       }).toThrowError(VerifierError);
     });
 
     it('should run into "notFound" exception with invalid token', () => {
       expect(() => {
-        authService.fromToken(token.substring(3));
+        verifierService.fromToken(token.substring(3));
       }).toThrowError(VerifierError);
     });
 
   });
+
+  describe('Extends Auth User', () => {
+
+    it('should tokenized and verified extends auth data', () => {
+
+      const authData = {
+        id: 4711,
+        roles: ['test'],
+        data: 'hello world',
+      };
+
+      const token = tokenService.fromAuth(authData);
+
+      const authUser = verifierService.fromToken<{id: number, roles: string[], data: string}>(token);
+
+      expect(authUser).not.toBeNull();
+      expect(authUser.id).toEqual(4711);
+      expect(authUser.hasRole('test')).toBeTruthy();
+      expect(authUser.hasRole('admin')).toBeFalsy();
+
+      expect(authUser.data.data).toEqual('hello world');
+    })
+  })
 
 });

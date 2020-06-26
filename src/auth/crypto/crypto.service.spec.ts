@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CRYPTO_CONFIG } from './crypto.config';
-import { CryptoError } from './crypto.error';
+import { RequiredError } from '../../common/error';
+import { CryptoConfig } from './crypto.config';
 import { cryptoFactory } from './crypto.factory';
 import { CryptoService } from './crypto.service';
 
@@ -17,7 +17,7 @@ describe('CryptService', () => {
       providers: [
         CryptoService,
         {
-          provide: CRYPTO_CONFIG,
+          provide: CryptoConfig,
           useFactory: async () => await cryptoFactory(priKeyFilename, pubKeyFilename),
         },
       ]
@@ -54,7 +54,7 @@ describe('CryptService', () => {
     it('should thrown an error with "null" value', () => {
       expect(() => {
         cryptoService.digest(null, 'abc');
-      }).toThrow(CryptoError);
+      }).toThrow(RequiredError);
     })
   })
 })

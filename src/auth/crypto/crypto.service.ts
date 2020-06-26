@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { createHash, privateEncrypt, publicDecrypt } from 'crypto';
-import { ENCODE_HEX, ENCODE_UTF, ValidUtil } from '../util';
-import { CRYPTO_CONFIG, CryptoKeys } from './crypto.config';
-import { CryptoError } from './crypto.error';
+import { RequiredError } from '../../common/error';
+import { ENCODE_HEX, ENCODE_UTF, HASH_FUNC, ValidUtil } from '../util';
+import { CryptoConfig } from './crypto.config';
 
 
 /**
@@ -11,7 +11,7 @@ import { CryptoError } from './crypto.error';
 @Injectable()
 export class CryptoService {
 
-  constructor(@Inject(CRYPTO_CONFIG) private config: CryptoKeys) {}
+  constructor(private config: CryptoConfig) {}
 
   /**
    * Encrypt the given value with the private key and returns as `hex` string.
@@ -35,25 +35,39 @@ export class CryptoService {
     return publicDecrypt(this.config.publicKey, buffered).toString(ENCODE_UTF);
   }
 
+  /**
+   * Generates the hashed password with a given prefix and palin password.
+   *
+   * @param {string} prefix the prefix
+   * @param {string} password the plain password
+   * @returns {string} the hashed password
+   * @throws RequiredError if one of parameters is invalid
+   */
   digest(prefix: string, password: string): string {
 
-    if(!ValidUtil.notEmpty(prefix) || !ValidUtil.notEmpty(password)) {
-      throw new CryptoError('required', 'The parameters are required');
+    if(!ValidUtil.notEmpty(prefix)) {
+      throw new RequiredError('prefix', 'digest requires parameter "prefix"');
+    }
+    if (!ValidUtil.notEmpty(password)) {
+      throw new RequiredError('password', 'digest requires parameter "password"')
     }
 
     const value = `${this.config.passwordSalt}${prefix}${password}`;
 
-    return createHash('sha256').update(value).digest(ENCODE_HEX);
+    return createHash(HASH_FUNC).update(value).digest(ENCODE_HEX);
   }
 
+  /**
+   * Verify the password hash with the plain password
+   *
+   * @param {string} passwordHash the hashed password
+   * @param {string} prefix the prefix of the password hash
+   * @param {string} password the plain password
+   * @returns {boolean} `true` means the password is equals
+   * @throws RequiredError if one of the parameters is invalid
+   */
   verify(passwordHash: string, prefix: string, password: string): boolean {
-
-    if (!ValidUtil.notEmpty(password)) {
-      throw new CryptoError('required', 'The parameters are required');
-    }
-
     const hashedPassword = this.digest(prefix, password);
-
     return passwordHash === hashedPassword;
   }
 }

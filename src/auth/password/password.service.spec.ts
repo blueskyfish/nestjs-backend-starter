@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CRYPTO_CONFIG } from '../crypto';
+import { CryptoConfig } from '../crypto';
 import { cryptoFactory } from '../crypto/crypto.factory';
 import { CryptoService } from '../crypto/crypto.service';
 import { PasswordService } from './password.service';
@@ -18,7 +18,7 @@ describe('Password Service', () => {
         CryptoService,
         PasswordService,
         {
-          provide: CRYPTO_CONFIG,
+          provide: CryptoConfig,
           useFactory: async () => await cryptoFactory(priKeyFilename, pubKeyFilename),
         },
       ]

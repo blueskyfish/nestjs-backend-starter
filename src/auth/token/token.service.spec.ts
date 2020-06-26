@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TimeUtil } from '../../common/util';
-import { CRYPTO_CONFIG } from '../crypto';
+import { CryptoConfig } from '../crypto';
 import { cryptoFactory } from '../crypto/crypto.factory';
 import { CryptoService } from '../crypto/crypto.service';
+import { TokenError } from './token.error';
 import { TokenService } from './token.service';
 
 describe('KeeperService', () => {
@@ -18,22 +18,49 @@ describe('KeeperService', () => {
         CryptoService,
         TokenService,
         {
-          provide: CRYPTO_CONFIG,
+          provide: CryptoConfig,
           useFactory: async () => await cryptoFactory(priKeyFilename, pubKeyFilename),
         }
       ]
     }).compile();
 
     tokenService = app.get(TokenService);
-
   });
 
   describe('Create Token "from"', () => {
 
     it('should return "token"', () => {
-      const token = tokenService.from(4711, 2349123, ['admin', 'reader', 'backup']);
+      const token = tokenService.from(4711, ['admin', 'reader', 'backup']);
       expect(token).not.toBeNull();
     });
 
-  })
+    it('should return "token" with extension', () => {
+      const authUser = {
+        id: 4711,
+        roles: ['test'],
+        data: 'test'
+      };
+
+      const token = tokenService.fromAuth(authUser);
+      // console.info(`Token: ${token}`);
+      expect(token).not.toBeNull();
+    });
+
+  });
+
+  describe('Error cases', () => {
+
+    it('should throw an error because missing required attributes: part 1', () => {
+
+      expect(() => {
+        tokenService.fromAuth({});
+      }).toThrow(TokenError);
+    });
+
+    it('should throw an error because missing required attributes: part 2', () => {
+      expect(() => {
+        tokenService.fromAuth<{id: number, roles: string[], data: string}>({ id: 4711, data: 'test'});
+      }).toThrow(TokenError);
+    });
+  });
 });

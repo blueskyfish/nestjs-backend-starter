@@ -1,19 +1,21 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { IAuthConfig } from './auth.config';
-import { CRYPTO_CONFIG } from './crypto';
+import { CryptoConfig } from './crypto';
 import { cryptoFactory } from './crypto/crypto.factory';
 import { CryptoService } from './crypto/crypto.service';
 import { PasswordService } from './password';
 import { TokenService } from './token';
+import { AuthMiddleware } from './user';
 import { VerifierService } from './verifier';
 
 // Services for internal usage
-const internalServices: any[] = [
+const authInternalServices: any[] = [
   CryptoService,
 ];
 
 // Services for global usage
-const services: any[] = [
+const authServices: any[] = [
+  AuthMiddleware,
   PasswordService,
   VerifierService,
   TokenService,
@@ -33,14 +35,14 @@ export class AppAuthModule {
       module: AppAuthModule,
       providers: [
         {
-          provide: CRYPTO_CONFIG,
+          provide: CryptoConfig,
           useFactory: async () => await cryptoFactory(config.priKeyFilename, config.pubKeyFilename),
         },
-        ...internalServices,
-        ...services
+        ...authInternalServices,
+        ...authServices
       ],
       exports: [
-        ...services,
+        ...authServices,
       ]
     };
   }

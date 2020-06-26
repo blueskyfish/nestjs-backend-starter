@@ -10,11 +10,6 @@ export interface IAuthData {
   id: number;
 
   /**
-   * The number of device
-   */
-  device: number;
-
-  /**
    * The array of the roles for the user
    */
   roles: string[];
@@ -24,7 +19,7 @@ export interface IAuthData {
 /**
  * The current user of the request. It is add to the express request with attribute name `authUser`.
  */
-export class AuthUser {
+export class AuthUser<A extends IAuthData = IAuthData> {
 
   /**
    * The primary key of the user
@@ -34,13 +29,11 @@ export class AuthUser {
   }
 
   /**
-   * The number of device
+   * Create an instance of AuthUser.
+   *
+   * @param {A extends IAuthData} data the internal auth data.
    */
-  get device(): number {
-    return this.data.device || NaN;
-  }
-
-  constructor(private data: IAuthData) {
+  constructor(public readonly data: A) {
   }
 
   /**
