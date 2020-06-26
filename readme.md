@@ -68,7 +68,7 @@ The Mysql / MariaDB database engine is running in docker container instance. The
 | Name                       | Description
 |----------------------------|------------------------------------------
 | `docker-compose.yml`       | The docker compose for the mysql database- and phpMyAdmin image.<br>It is depend on the file `docker.env`.
-| `docker.env`               | The environment variables for the mysql server.
+| `docker.compose.env`       | The environment variables for the mysql server.
 | `docker/db`                | The docker directory with the mysql configuration
 | `docker/db/Dockerfile`     | The MySQL Docker file.
 | `docker/db/sql`            | The directory for sql statement files for initialization of the database.
@@ -121,7 +121,6 @@ const os = require('os');
 
 const userHome = os.homedir();
 const dbPassword = fromEnv('DB_PASSWORD').asString;
-const authSecret = fromEnv('AUTH_SECRET').asString;
 
 module.exports = {
   apps: [
@@ -138,7 +137,8 @@ module.exports = {
         'DB_USER': 'dbUser',
         'DB_DATABASE': 'databaseName',
         'DB_PASSWORD': dbPassword,
-        'AUTH_SECRET': authSecret,
+        'AUTH_PRI_FILE': `${userHome}/etc/app/private-key.pem`,
+        'AUTH_PUB_FILE': `${userHome}/etc/app/puplic-key.pem`,
         'AUTH_EXPIRES': TimeUtil.fromDays(7),
       },
       listen_timeout: 5000,
@@ -158,7 +158,6 @@ The critical environment settings are not setting in the **PM2** configuration f
 
 ```text
 export DB_PASSWORD=xxxx
-export AUTH_SECRET=yyyy
 ```
 
 
@@ -184,10 +183,11 @@ export AUTH_SECRET=yyyy
 
 ## Authorization & Authentication
 
-The protected endpoints require a logged in user. Here is a description of how a user logs on first, gets an authorization token and uses it for a protected endpoint.
+The protected endpoints require a logged in user. Here is a description of how a user logs on first, gets an
+authorization token and uses it for a protected endpoint.
 
 * Authenticated User
-* Authentification
+* Authorisations
 * Authentication
 
 ### Authenticated User
@@ -206,7 +206,7 @@ The roles are used to determine whether the user has the necessary rights to exe
 }
 ```
 
-### Authentification
+### Authorisations
 
 A user must log in with his email and password. If both are correct, a device id is created and created together with
 the user's roles to an Authenticated User.
@@ -218,14 +218,14 @@ This user is encrypted with a private key and can be decrypted with the public k
 
 A logged in user is required in protected endpoints. The client must send this information in the HTTP header **x-backend-starter**.
 
-In the middleware service, the authenticated user is extracted from the header (*decrypted with the public key*) and checked
-with the included device whether the user is still known and valid with his device.
+In the middleware service, the authenticated user will extract from the header (*decrypted with the public key*) and checked
+with the included device whether the user still known and valid with his device.
 
 How long a user device is valid can be defined with the environment variable **AUTH_EXPIRES** (*the time unit is seconds*)
 
 If a user is no longer valid with his device, the user must log in again.
 
-If the check fails, an Http Status Code UNAUTHENTICATED is always sent.
+If the check fails, a Http Status Code UNAUTHENTICATED is always sent.
 
 
 ### Access to AuthUser
