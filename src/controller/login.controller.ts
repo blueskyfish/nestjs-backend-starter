@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { LoginPayload, LoginUser } from './business/entities';
-import { UserService } from './business/user';
-import { ErrorBody } from './common/error';
+import { LoginPayload, LoginUser } from '../business/user/entities';
+import { UserService } from '../business/user';
+import { ErrorBody } from '../common/error';
 
 /**
  * The user login endpoint controller.

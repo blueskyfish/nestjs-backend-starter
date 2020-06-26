@@ -1,8 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { LoginUser, RegisterPayload } from './business/entities';
-import { UserService } from './business/user';
-import { ErrorBody } from './common/error';
+import { LoginUser, RegisterPayload } from '../business/user/entities';
+import { UserService } from '../business/user';
+import { ErrorBody } from '../common/error';
 
 /**
  * The user register endpoint.

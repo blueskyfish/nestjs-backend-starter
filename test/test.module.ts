@@ -1,15 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { DEFAULT_DB_HOST } from '../src/app.config';
-import { AppController } from '../src/app.controller';
-import { AppService } from '../src/app.service';
+import { SystemController } from '../src/controller/system.controller';
+import { SystemService } from '../src/business/system/system.service';
 import { AppAuthModule } from '../src/auth/auth.module';
 import { AppBusinessModule } from '../src/business/business.module';
 import { AuthMiddleware } from '../src/business/middleware';
 import { AppCommonModule } from '../src/common/common.module';
 import { TimeUtil } from '../src/common/util';
-import { LoginController } from '../src/login.controller';
-import { RegisterController } from '../src/register.controller';
-import { UserController } from '../src/user.controller';
+import { LoginController } from '../src/controller/login.controller';
+import { RegisterController } from '../src/controller/register.controller';
+import { UserController } from '../src/controller/user.controller';
 import {
   TEST_AUTH_PRI_FILENAME,
   TEST_AUTH_PUB_FILENAME,
@@ -41,13 +41,13 @@ import {
     }),
   ],
   controllers: [
-    AppController,
+    SystemController,
     LoginController,
     RegisterController,
     UserController,
   ],
   providers: [
-    AppService,
+    SystemService,
   ]
 })
 export class TestModule implements NestModule {
