@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import * as _ from 'lodash';
-import { TimeUtil } from '../../common/util';
 import { ValidUtil } from '../util';
 import { VerifierError } from './verifier.error';
-import { AuthUser, IAuthData } from '../auth.user';
+import { AuthUser, IAuthData } from '../user/';
 import { CryptoService } from '../crypto/crypto.service';
+
+/**
+ * parse the string and convert into auth data.
+ */
+function parseAuthData<AuthData extends IAuthData>(data: string): AuthData {
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    throw new VerifierError('notSupport', 'Token is not support')
+  }
+}
 
 /**
  * Verifier from the token and create the {@link AuthUser} in case of success.
@@ -26,24 +36,24 @@ export class VerifierService {
 
   /**
    * Get the auth user from the token.
+   *
    * @param {string} token the given token
    * @returns {AuthUser} the user
    * @throws VerifierError when failed to create the auth user.
    */
-  fromToken(token: string): AuthUser {
+  fromToken<AuthData extends IAuthData>(token: string): AuthUser<AuthData> {
+
     const authValue = this.decryptToken(token);
 
-    const authData = parseAuthData(authValue);
+    const authData: AuthData = parseAuthData<AuthData>(authValue);
 
     // All required attributes are exist and valid
-    if (
-      !ValidUtil.isPositiv(authData.id) || !ValidUtil.isPositiv(authData.device) ||
-      _.isNil(authData.roles) && !_.isArray(authData.roles)
+    if (!ValidUtil.isPositiv(authData.id) || !_.isArray(authData.roles)
     ) {
       throw new VerifierError('invalid', 'Token data is not valid');
     }
 
-    return new AuthUser(authData);
+    return new AuthUser<AuthData>(authData);
   }
 
   // Decrypt the token into string
@@ -56,11 +66,3 @@ export class VerifierService {
   }
 }
 
-// parse the string and convert into auth data.
-const parseAuthData = (data: string): IAuthData => {
-  try {
-    return JSON.parse(data);
-  } catch (e) {
-    throw new VerifierError('notSupport', 'Token is not support')
-  }
-}

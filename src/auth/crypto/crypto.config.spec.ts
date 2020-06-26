@@ -1,4 +1,4 @@
-import { CryptoKeys } from './crypto.config';
+import { CryptoConfig } from './crypto.config';
 import { cryptoFactory } from './crypto.factory';
 
 const priKeyFilename = 'test-private.pem';

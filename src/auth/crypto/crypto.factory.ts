@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { readKey } from '../util';
-import { CryptoKeys } from './crypto.config';
+import { CryptoConfig } from './crypto.config';
 
 const REG_BEGIN = /-----BEGIN.+-----/;
 const REG_END = /-----END.+-----/
@@ -9,9 +9,9 @@ const REG_END = /-----END.+-----/
  *
  * @param priKeyFilename the filename of the private key
  * @param pubKeyFilename the filename of the public key
- * @returns {Promise<CryptoKeys>}
+ * @returns {Promise<CryptoConfig>}
  */
-export async function cryptoFactory(priKeyFilename: string, pubKeyFilename: string): Promise<CryptoKeys> {
+export async function cryptoFactory(priKeyFilename: string, pubKeyFilename: string): Promise<CryptoConfig> {
 
   const privateKey = await readKey(priKeyFilename);
   const publicKey = await readKey(pubKeyFilename);
@@ -25,5 +25,5 @@ export async function cryptoFactory(priKeyFilename: string, pubKeyFilename: stri
     .filter(line => _.size(line) > 0)
     .join('');
 
-  return new CryptoKeys(publicKey, privateKey, passwordSalt);
+  return new CryptoConfig(publicKey, privateKey, passwordSalt);
 }

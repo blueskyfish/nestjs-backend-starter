@@ -7,7 +7,7 @@ export const HTTP_AUTH_HEADER = 'x-backend-starter';
 
 export const API_KEY_NAME = 'ApiKey';
 
-export const API_KEY_STARTER: Record<string, string[]>[] = [{
+export const API_SECURITY: Record<string, string[]>[] = [{
   [API_KEY_NAME]: []
 }];
 

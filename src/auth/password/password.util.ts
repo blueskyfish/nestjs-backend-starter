@@ -7,7 +7,13 @@ const PREFIX = '<:';
 const POSTFIX = ':>';
 const SEPARATOR = ':><:';
 
-export const buildPassword = (salt: string, password: string): string => {
+/**
+ * Build the password from 3 parts
+ * @param {string} salt the user salt
+ * @param {string} password the hashed password
+ * @returns {string} the formatted password for store and manage
+ */
+export function buildPassword(salt: string, password: string): string {
   return [
     PREFIX,
     VERSION,    // Index: 0
@@ -17,21 +23,42 @@ export const buildPassword = (salt: string, password: string): string => {
     password,   // Index: 2
     POSTFIX
   ].join('');
-};
+}
 
-export const getVersion = (hashedPassword: string): string | null => {
-  return splitAndGet(hashedPassword, 0);
-};
+/**
+ * Get the version information of the formatted password
+ * @param {string} password the formatted password
+ * @returns {string | null} the information or null if the parameter is invalid
+ */
+export function getVersion(password: string): string | null {
+  return splitAndGet(password, 0);
+}
 
-export const getSalt = (hashedPassword: string): string | null => {
-  return splitAndGet(hashedPassword, 1);
-};
+/**
+ * Get the user salt.
+ *
+ * @param {string} formattedPassword the password
+ * @returns {string | null} the user salt or null
+ */
+export function getSalt (formattedPassword: string): string | null {
+  return splitAndGet(formattedPassword, 1);
+}
 
-export const getPassword = (hashedPassword: string): string | null => {
-  return splitAndGet(hashedPassword, 2);
-};
+/**
+ * Get the hashed password from the formatted password.
+ *
+ * @param {string} formattedPassword the password
+ * @returns {string | null} the hashed password or null
+ */
+export function getPassword(formattedPassword: string): string | null {
+  return splitAndGet(formattedPassword, 2);
+}
 
-export const generateSalt = (): string => {
+/**
+ * Generates an user salt
+ * @returns {string}
+ */
+export function generateSalt(): string {
   return generate({
     length: 41,
     readable: true,
@@ -39,21 +66,28 @@ export const generateSalt = (): string => {
   });
 }
 
-function splitAndGet(hashedPassword: string, index: number): string | null {
-  if (!ValidUtil.notEmpty(hashedPassword)) {
+/**
+ * Internal helper function for extract values from formatted password
+ *
+ * @param {string} formattedPassword the password
+ * @param {number} index the index of wanted value
+ * @returns {string | null} the value or null
+ */
+function splitAndGet(formattedPassword: string, index: number): string | null {
+  if (!ValidUtil.notEmpty(formattedPassword)) {
     return null;
   }
 
-  if (!hashedPassword.startsWith(PREFIX) || !hashedPassword.endsWith(POSTFIX)) {
+  if (!formattedPassword.startsWith(PREFIX) || !formattedPassword.endsWith(POSTFIX)) {
     return null;
   }
 
-  const values = hashedPassword.substring(PREFIX.length, hashedPassword.length - POSTFIX.length);
+  const values = formattedPassword.substring(PREFIX.length, formattedPassword.length - POSTFIX.length);
 
   if (!ValidUtil.notEmpty(values)) {
     return null;
   }
 
   const parts = values.split(SEPARATOR);
-  return parts[index];
+  return parts[index] || null;
 }
