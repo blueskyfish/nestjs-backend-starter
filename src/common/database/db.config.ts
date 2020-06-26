@@ -6,6 +6,9 @@ import { DbUtil } from './db.util';
  */
 export const NULL_VALUE = 'NULL';
 
+/**
+ * @deprecated
+ */
 export const NL = '\n';
 
 export const DEFAULT_TIMEOUT = 10000;

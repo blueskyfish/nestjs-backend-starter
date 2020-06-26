@@ -1,5 +1,5 @@
 /**
- * Base error
+ * Base error for all business errors
  */
 export class CommonError extends Error {
 
