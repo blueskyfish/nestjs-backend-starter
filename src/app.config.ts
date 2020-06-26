@@ -76,14 +76,4 @@ export enum EnvName {
    * Environment variable for the filename of the public key
    */
   AuthPubFile = 'AUTH_PUB_FILE',
-
-  /**
-   * Environment variable for the name of the http header with the encrypted token of the current user
-   */
-  AuthHeader = 'AUTH_HEADER',
-
-  /**
-   * Environment variable for the time as days until the expires time is reaching.
-   */
-  AuthExpires = 'AUTH_EXPIRES',
 }

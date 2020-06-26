@@ -40,6 +40,7 @@ Some programs must be available on the developer computer:
 * NestJS CLI <https://nestjs.com/><br>install global: `yarn global add @nestjs/cli` or `npm i -g @nestjs/cli`
 * OpenSSL commando line interface for generate the local or develop cetrications (public and private keys)
 
+
 ## Setup
 
 
@@ -100,8 +101,6 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 | **DB_PASSWORD**     | -              | Yes      | No  | The password of the database user.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
 | **AUTH_PRI_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the private key
 | **AUTH_PUB_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the public key
-| **AUTH_EXPIRES**    | `7`            | No       | Yes | Environment variable for the time as days until the expires time is reaching.
-
 
 
 ### PM2 Configuration
@@ -138,8 +137,7 @@ module.exports = {
         'DB_DATABASE': 'databaseName',
         'DB_PASSWORD': dbPassword,
         'AUTH_PRI_FILE': `${userHome}/etc/app/private-key.pem`,
-        'AUTH_PUB_FILE': `${userHome}/etc/app/puplic-key.pem`,
-        'AUTH_EXPIRES': TimeUtil.fromDays(7),
+        'AUTH_PUB_FILE': `${userHome}/etc/app/puplic-key.pem`
       },
       listen_timeout: 5000,
       kill_timeout: 2000,
@@ -232,8 +230,10 @@ If the check fails, a Http Status Code UNAUTHENTICATED is always sent.
 
 In the endpoint the decorator '@User' can be used.
 
+**Example**
+
 ```js
-async getBookList(@User() authUser: AuthUser, @Param('authorId') authorId: number): Promise<Book[]> {}
+async getBookList(@GetAuthUser() authUser: AuthUser, @Param('authorId') authorId: number): Promise<Book[]> {}
 ```
 
 
