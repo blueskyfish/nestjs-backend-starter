@@ -1,27 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { AuthUser } from '../../auth';
 import { PasswordService } from '../../auth/password';
 import { TokenService } from '../../auth/token';
-import { DbConnection } from '../../common/database';
-import { DateUtil } from '../../common/util';
-import { BusinessService } from '../business.service';
-import { LoginPayload, LoginUser, RegisterPayload, UserInfo } from '../entities';
-import { mailAlreadyUse, notFoundUser, registerUserFailed, UserError } from '../errors';
-import { AuthUserService } from '../middleware';
-import { RepositoryProvider } from '../repository';
-import { IDbInsertDevice } from '../repository/device/entities';
-import { IDbInsertUser } from '../repository/user/entities';
-import { NameGeneratorService } from '../service';
+import { AuthUser } from '../../auth/user';
+import { RepositoryPool } from '../../repository/pool';
+import { IDbInsertUser } from '../../repository/pool/user/entities';
+import { RepositoryService } from '../../repository';
+import { LoginPayload, LoginUser, RegisterPayload, UserInfo } from './entities';
+import { UserError } from './user.error';
 
+/**
+ * The service handle the user request
+ */
 @Injectable()
 export class UserService {
 
   constructor(
-    private business: BusinessService,
+    private repositoryService: RepositoryService,
     private tokenService: TokenService,
-    private passwordService: PasswordService,
-    private nameGenerator: NameGeneratorService,
-    private authUserService: AuthUserService
+    private passwordService: PasswordService
   ) {
   }
 
@@ -30,51 +26,35 @@ export class UserService {
    *
    * @param {LoginPayload} payload the payload data from sent user
    * @returns {Promise<LoginUser>} in case of success it sends back the user information with authentication.
-   * @throws UserError
+   * @throws UserError if the user not found
    */
   async login(payload: LoginPayload): Promise<LoginUser> {
-    return await this.business.openRepository<LoginUser>(async (rep: RepositoryProvider) => {
+    return await this.repositoryService.execute<LoginUser>(async (rep: RepositoryPool) => {
 
       const dbUser = await rep.user.findUserByEmail(payload.email);
       if (!dbUser) {
-        throw notFoundUser();
+        throw UserError.notFound();
       }
 
       const checked = this.passwordService.checkPassword(dbUser.password, payload.password);
       if (!checked) {
-        throw notFoundUser();
+        throw UserError.notFound();
       }
 
-      try {
-        await rep.startTransaction();
+      const roles: string[] = JSON.parse(dbUser.roles);
+      const token = this.tokenService.fromAuth({
+        id: dbUser.userId,
+        roles,
+        // TODO Add here additional values
+      });
 
-        const deviceValues: IDbInsertDevice = {
-          name: this.nameGenerator.generatorName(),
-          time: DateUtil.formatTimestamp(),
-          userId: dbUser.userId
-        };
-        const deviceId = await rep.device.insertDevice(deviceValues);
-
-        await rep.commit();
-
-        const roles: string[] = JSON.parse(dbUser.roles);
-        const token = this.tokenService.from(dbUser.userId, deviceId, roles);
-
-        this.authUserService.resetAuthUser(dbUser.userId);
-
-        // the login user
-        return {
-          id: dbUser.userId,
-          name: dbUser.name,
-          email: dbUser.email,
-          token,
-        } as LoginUser;
-
-      } catch (e) {
-        console.error('> Error: User Login =>', e.message);
-        await rep.rollback();
-        throw notFoundUser();
-      }
+      // the login user
+      return {
+        id: dbUser.userId,
+        name: dbUser.name,
+        email: dbUser.email,
+        token,
+      } as LoginUser;
 
     });
   }
@@ -84,14 +64,14 @@ export class UserService {
    *
    * @param {AuthUser} authUser the current user.
    * @returns {Promise<UserInfo>}
-   * @throws UserError
+   * @throws UserError if the user is not found
    */
   async getInfo(authUser: AuthUser): Promise<UserInfo> {
-    return await this.business.openRepository<UserInfo>(async (rep: RepositoryProvider) => {
+    return await this.repositoryService.execute<UserInfo>(async (rep: RepositoryPool) => {
 
       const dbUser = await rep.user.findUserById(authUser.id);
       if (!dbUser) {
-        throw notFoundUser();
+        throw UserError.notFound();
       }
 
       return {
@@ -107,15 +87,15 @@ export class UserService {
    *
    * @param {RegisterPayload} payload the payload data sent from user
    * @returns {Promise<LoginUser>} in case of success it sends back the user information with authentication.
-   * @throws UserError
+   * @throws UserError if the email is already use or intern database error
    */
   async register(payload: RegisterPayload): Promise<LoginUser> {
 
-    return this.business.openRepository<LoginUser>(async (rep: RepositoryProvider) => {
+    return this.repositoryService.execute<LoginUser>(async (rep: RepositoryPool) => {
 
       const exist = await rep.user.emailExists(payload.email);
       if (exist) {
-        throw mailAlreadyUse();
+        throw UserError.mailAlreadyUse();
       }
 
       try {
@@ -129,19 +109,16 @@ export class UserService {
         };
         const dbUserId = await rep.user.insertUser(values);
 
-        const deviceValues: IDbInsertDevice = {
-          name: this.nameGenerator.generatorName(),
-          time: DateUtil.formatTimestamp(),
-          userId: dbUserId,
-        };
-        const deviceId = await rep.device.insertDevice(deviceValues);
-
         await rep.commit();
 
         // build the response
         const dbUser = await rep.user.findUserById(dbUserId);
         const roles: string[] = JSON.parse(dbUser.roles);
-        const token = this.tokenService.from(dbUserId, deviceId, roles);
+        const token = this.tokenService.fromAuth({
+          id: dbUser.userId,
+          roles,
+          // TODO Add here additional values
+        });
 
         // the login user
         return {
@@ -153,7 +130,7 @@ export class UserService {
 
       } catch (e) {
         await rep.rollback();
-        throw registerUserFailed();
+        throw UserError.registerFailed();
       }
     });
   }
