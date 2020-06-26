@@ -32,6 +32,7 @@ export class AppCommonModule {
         useValue: new DbConfig(config),
       },
     ];
+
     return {
       global: true,
       module: AppCommonModule,
