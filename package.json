@@ -40,7 +40,10 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "doc": "./node_modules/.bin/compodoc -p tsconfig.json -s",
     "build:docker": "docker-compose build",
-    "start:docker": "docker-compose up"
+    "start:docker": "docker-compose up -d",
+    "stop:docker": "docker-compose down",
+    "reset:docker": "yarn stop:docker && rimraf var && yarn start:docker",
+    "logs:docker": "docker-compose logs -f"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.9",
