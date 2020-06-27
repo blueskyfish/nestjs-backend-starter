@@ -23,19 +23,4 @@ CREATE TABLE `starter_users` (
   UNIQUE KEY `UNI_EMAIL` (`email`)
 ) ENGINE = InnoDB COMMENT = '(Nestjs Starter) the user' AUTO_INCREMENT=1000;
 
-
---
--- Device table (device_id begins with 1000)
---
-CREATE TABLE `starter_devices` (
-  `device_id` INT NOT NULL AUTO_INCREMENT COMMENT 'The unique device id',
-  `user_id` INT NOT NULL COMMENT 'The user id',
-  `name` VARCHAR(60) NOT NULL COMMENT 'The device name',
-  `creation` DATETIME NOT NULL COMMENT 'The creation timestamp from the login',
-  `lastaccess` DATETIME NOT NULL COMMENT 'The last access of the user with his device',
-  PRIMARY KEY (`device_id`),
-  INDEX `IDX_DEVICE_USERS` (`user_id`)
-) ENGINE = InnoDB COMMENT = '(Nestjs Starter) the user device table' AUTO_INCREMENT=1000;
-
-
 COMMIT;

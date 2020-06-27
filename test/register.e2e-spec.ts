@@ -26,11 +26,12 @@ describe('RegisterController (e2e)', () => {
 
     const dbService = app.get(DbService);
     const conn = dbService.getConnection();
-
-    let result = await conn.query('TRUNCATE TABLE `starter_users`');
-    console.debug('> Debug: truncate "users" =>', result);
-    result = await conn.query('TRUNCATE TABLE `starter_devices`');
-    console.debug('> Debug: truncate "devices" =>', result);
+    try {
+      let result = await conn.query('TRUNCATE TABLE `starter_users`');
+      console.debug('> Debug: truncate "users" =>', result);
+    } finally {
+      conn.release();
+    }
   });
 
   it('/register (POST)', async () => {
