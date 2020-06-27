@@ -3,9 +3,9 @@
 # TODO Rename "Starter" to your Short Project Name
 
 if [ -f /app/data/createDB ]; then
-  echo ">>>>>> (Starter) MySQL directory already present, skipping creation"
+  echo ">>>>>> (Starter) MySQL directory already present, skip creating database from 'sql' directory..."
 else
-  echo ">>>>>> (Starter) MySQL data directory not found, creating initial DBs"
+  echo ">>>>>> (Starter) MySQL data directory not found, creating initial DBs from 'sql' directory..."
 
   mysql_install_db --user=root > /dev/null
 
@@ -72,4 +72,5 @@ EOF
 fi
 
 # Mysql Server
+echo ">>>>>> (Starter) starts the MySQL database domain with \"root\" and console parameter..."
 exec /usr/bin/mysqld --user=root --console
