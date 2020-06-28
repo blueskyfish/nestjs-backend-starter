@@ -1,14 +1,28 @@
+import { fromEnv } from './common/env';
+import * as _ from 'lodash';
 
 /**
  * The default host of the backend server
  */
 export const DEFAULT_HOST = 'localhost';
 
+export enum StageMode {
+  Dev = 'dev',
+  Prod = 'prod',
+}
 
 /**
  * The list of environment name
  */
 export enum EnvName {
+
+  /**
+   * The running stage of the application.
+   *
+   * * `PROD` means the application is running on a production computer
+   * * else the application is running in developer mode.
+   */
+  Stage = 'STAGE',
 
   /** Environment variable for the backend server host */
   Host = 'HOST',
@@ -76,4 +90,15 @@ export enum EnvName {
    * Environment variable for the filename of the public key
    */
   AuthPubFile = 'AUTH_PUB_FILE',
+}
+
+/**
+ * Get the stage mode of the application
+ *
+ * @return {StageMode} the stage mode
+ */
+export function getStageMode(): StageMode {
+  const value = fromEnv(EnvName.Stage);
+
+  return value.hasValue && _.toUpper(value.asString) === 'PROD' ? StageMode.Prod : StageMode.Dev;
 }
