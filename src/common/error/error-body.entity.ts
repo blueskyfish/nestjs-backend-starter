@@ -30,7 +30,7 @@ export class ErrorBody {
   readonly code: string;
 
   @ApiProperty({
-    description: 'The error a long description',
+    description: 'The message of the error occurretion',
     required: true,
   })
   readonly message: string;

@@ -1,21 +1,32 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { CommonError, ErrorBody } from './index';
 
+/**
+ * The filter process the {@link CommonError} and build the response.
+ */
 @Catch(CommonError)
 export class ErrorHandlerFilter implements ExceptionFilter {
+
+  /**
+   * Create the instance of filter
+   *
+   * @param {Logger} logger the logger
+   */
+  constructor(private logger: Logger) {
+  }
 
   catch(exception: CommonError, host: ArgumentsHost): any {
 
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const statusCode = exception.statusCode;
+    const statusCode: number = exception.statusCode;
 
     const method = request.method;
     const url = request.originalUrl;
 
-    let data = exception.data ? { ...exception.data } : null;
+    const data = exception.data ? { ...exception.data } : null;
 
     const stack = exception.stack ? exception.stack.split('\n') : [];
 
@@ -29,8 +40,9 @@ export class ErrorHandlerFilter implements ExceptionFilter {
       data,
     };
 
-    // show the error into the console log
-    console.error('> Error:\n%s\n', JSON.stringify(body, null, 2));
+    // show the error
+    this.logger.error(`${method}: ${url} => [${body.group}.${body.code}] ${body.message}`);
+    this.logger.debug(`\n${JSON.stringify(body, null, 2)}`);
 
     response
       .status(statusCode)

@@ -1,3 +1,5 @@
+import { HttpStatus } from '@nestjs/common';
+
 /**
  * Base error for all business errors
  */
@@ -16,7 +18,7 @@ export class CommonError extends Error {
    * @param {*} [data] an optional data property
    */
   constructor(
-    public readonly statusCode: number,
+    public readonly statusCode: HttpStatus,
     public readonly group: string,
     public readonly code: string,
     message: string,

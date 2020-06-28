@@ -1,4 +1,4 @@
-import { INestApplication, NotFoundException, ValidationError, ValidationPipe } from '@nestjs/common';
+import { Logger, NotFoundException, ValidationError, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as _ from 'lodash';
@@ -17,17 +17,18 @@ async function bootstrap() {
     throw new BootstrapError('Port', 'Server port is required. Set environment "PORT"');
   }
 
-  const app: INestApplication = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule);
+
+  const logger = app.get(Logger);
+
   app.enableShutdownHooks();
-  app.useGlobalFilters(new ErrorHandlerFilter());
+  app.useGlobalFilters(
+    new ErrorHandlerFilter(logger),
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       // Implicit type conversion: https://docs.nestjs.com/migration-guide#implicit-type-conversion-validationpipe
       transform: true,
-      validationError: {
-        target: false,
-        value: false,
-      },
       // customized the error response
       exceptionFactory: (errors: ValidationError[]) => {
         return new ValidError(errors);

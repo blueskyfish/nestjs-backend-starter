@@ -1,5 +1,4 @@
 import { HttpStatus, ValidationError } from '@nestjs/common';
-
 import { CommonError } from './common.error';
 
 export const VALID_ERROR_GROUP = 'validate';
@@ -7,10 +6,25 @@ export const VALID_ERROR_CODE = 'parameters';
 export const VALID_ERROR_MESSAGE = 'Entities with validation errors';
 
 /**
- * The error messages information
+ * Build the error messages from the given list of `ValidationError` and build an map with the affected attributes
+ *
+ * @param {ValidationError[]} errors the list of errors
+ * @returns {Array<string>} an error message instance
  */
-export interface IErrorMessages {
-  [property: string]: string[];
+function buildErrorMessages(errors: ValidationError[]): string[] {
+
+  function flatten(arr): string[] {
+    return arr.reduce(function (flat, toFlatten) {
+      return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+    }, []);
+  }
+
+  console.error(JSON.stringify(errors, null, 2));
+
+  return flatten(errors
+    .map((e: ValidationError) => {
+      return Object.keys(e.constraints).map(property => `${e.property}: ${e.constraints[property]}`);
+    }));
 }
 
 /**
@@ -29,11 +43,7 @@ export interface IErrorMessages {
  *         "    at async /Users/sarah/Projects/blueskyfish/github/nestjs-backend-starter/node_modules/@nestjs/core/router/router-proxy.js:8:17"
  *     ],
  *     "data": {
- *         "errors": {
- *             "property": [
- *                 "property: message"
- *             ],
- *         }
+ *         "errors": ["message1", "message2"]
  *     }
  * }
  * ```
@@ -45,20 +55,4 @@ export class ValidError extends CommonError {
       errors: buildErrorMessages(errors),
     });
   }
-}
-
-/**
- * Build the error messages from the given list of `ValidationError` and build an map with the affected attributes
- *
- * @param {ValidationError[]} errors the list of errors
- * @returns {IErrorMessages} an error message instance
- */
-const buildErrorMessages = (errors: ValidationError[]): IErrorMessages => {
-  const errorMsg: IErrorMessages = {};
-
-  errors.forEach((e: ValidationError) => {
-    errorMsg[e.property] = Object.keys(e.constraints).map(property => `${property}: ${e.constraints[property]}`);
-  });
-
-  return errorMsg;
 }
