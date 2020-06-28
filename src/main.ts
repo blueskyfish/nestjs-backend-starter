@@ -83,7 +83,7 @@ async function bootstrap() {
 
   // Start the listen of the server
   await app.listen(port, host, () => {
-    logger.log(`Backend Server (${stage}) is listen http://${host}:${port}/`);
+    logger.log(`Backend Server (${stage}) is listen http://${host}:${port}/`, 'bootstrap');
   });
 }
 

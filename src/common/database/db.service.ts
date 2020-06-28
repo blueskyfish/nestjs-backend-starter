@@ -4,6 +4,7 @@ import { createPool, MysqlError, Pool, PoolConnection } from 'mysql';
 import { DateUtil, forEachIterator } from '../util';
 import { DbConfig, NULL_VALUE } from './db.config';
 import { DbConnection } from './db.connection';
+import { DB_ERROR_GROUP } from './db.error';
 import { DbUtil } from './db.util';
 
 /**
@@ -68,7 +69,7 @@ export class DbService implements OnApplicationShutdown {
 
     // register pool events
     this._pool.on('acquire', (conn: PoolConnection) => {
-      this.logger.debug(`Acquire connection [${conn.threadId}]`);
+      this.logger.debug(`Acquire connection [${conn.threadId}]`, DB_ERROR_GROUP);
       if (conn.threadId) {
         this.durationMap.set(conn.threadId, DateUtil.now());
       }
@@ -78,25 +79,25 @@ export class DbService implements OnApplicationShutdown {
     this._pool.on('enqueue', (err: MysqlError) => this.handleEnqueueError(err));
 
     this._pool.on('connection', (conn: PoolConnection) => {
-      this.logger.debug(`connection [${conn.threadId}] requested`);
+      this.logger.debug(`connection [${conn.threadId}] requested`, DB_ERROR_GROUP);
     });
 
     this._pool.on('release', (conn: PoolConnection) => {
       if (conn.threadId) {
         const startTime = this.durationMap.get(conn.threadId);
         if (!startTime) {
-          this.logger.warn(`> Warn: The connection [${conn.threadId}] has no start time`);
+          this.logger.warn(`> Warn: The connection [${conn.threadId}] has no start time`, DB_ERROR_GROUP);
           return;
         }
 
         const endTime = DateUtil.now();
 
         const milliSeconds = endTime.diff(startTime, 'milliseconds');
-        this.logger.debug(`connection [${conn.threadId}] is monitored with ${milliSeconds} milliseconds`);
+        this.logger.debug(`connection [${conn.threadId}] is monitored with ${milliSeconds} milliseconds`, DB_ERROR_GROUP);
 
         this.durationMap.delete(conn.threadId);
       } else {
-        this.logger.warn('> Warn: Connection could not be monitored');
+        this.logger.warn('> Warn: Connection could not be monitored', DB_ERROR_GROUP);
       }
     });
   }
@@ -114,18 +115,18 @@ export class DbService implements OnApplicationShutdown {
     return new Promise(((resolve, reject) => {
       if (this._pool) {
 
-        this.logger.log('start to close database pool...');
+        this.logger.log('close database pool...', DB_ERROR_GROUP);
 
         // show error counters
         forEachIterator(this.errorCounter.entries(), ([ code, count ]) => {
-          this.logger.log(`Error Counter:  ${count} => ${code}`);
+          this.logger.log(`Error Counter:  ${count} => ${code}`, DB_ERROR_GROUP);
         });
         this.errorCounter.clear();
 
         if (this.durationMap.size > 0) {
 
           forEachIterator(this.durationMap.entries(), ([ threadId, startTime ]) => {
-            this.logger.log(`Duration [${threadId}] => ${DateUtil.formatTimestamp(startTime)}`);
+            this.logger.log(`Duration [${threadId}] => ${DateUtil.formatTimestamp(startTime)}`, DB_ERROR_GROUP);
           });
 
           this.durationMap.clear();
@@ -133,12 +134,12 @@ export class DbService implements OnApplicationShutdown {
 
         this._pool.end((err: MysqlError) => {
           if (err) {
-            this.logger.error(`> Error: Query Error: ${err.code} -> ${err.message}`);
-            this.logger.error(`> Error: Stack: \n${err.stack}`);
+            this.logger.warn(`> Error: Query Error: ${err.code} -> ${err.message}`, DB_ERROR_GROUP);
+            this.logger.warn(`> Error: Stack: \n${err.stack}`, DB_ERROR_GROUP);
             return reject(err);
           }
 
-          this.logger.log('> Info: finish of close database pool...');
+          this.logger.log('finish of close database pool...', DB_ERROR_GROUP);
           resolve();
         });
       }
@@ -154,7 +155,7 @@ export class DbService implements OnApplicationShutdown {
       const code = DbUtil.adjustAndLower(err.code, '.');
       const message = err.sqlMessage;
       const sql = err.sql;
-      this.logger.error(`> Error: ${code} => ${message}\n${sql}\n-----`);
+      this.logger.warn(`Error: ${code} => ${message}\n${sql}\n-----`, DB_ERROR_GROUP);
 
       const count = this.errorCounter.get(code) || 0;
       this.errorCounter.set(code, count + 1);

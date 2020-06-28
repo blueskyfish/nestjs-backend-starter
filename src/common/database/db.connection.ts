@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 import * as _ from 'lodash';
 import { Connection, MysqlError, Pool, PoolConnection } from 'mysql';
-import { connectError, queryError, transactionError } from './db.error';
+import { connectError, DB_ERROR_GROUP, queryError, transactionError } from './db.error';
 
 // Kind of execution
 type ExecutionAction = 'select' | 'insert' | 'update' | 'delete' | 'query';
@@ -39,7 +39,7 @@ export class DbConnection {
         return new Promise<void>((resolve, reject) => {
           this._connection.beginTransaction((err: MysqlError) => {
             if (err) {
-              this.logger.warn(`Begin Transaction Error: ${err.errno} -> ${err.message}`);
+              this.logger.warn(`Begin Transaction Error: ${err.errno} -> ${err.message}`, DB_ERROR_GROUP);
               return reject(transactionError(err));
             }
             resolve();
@@ -56,7 +56,7 @@ export class DbConnection {
     return new Promise<boolean>(resolve => {
       this._connection.commit((err: MysqlError) => {
         if (err) {
-          this.logger.warn(`Commit Error: ${err.errno} -> ${err.message}`);
+          this.logger.warn(`Commit Error: ${err.errno} -> ${err.message}`, DB_ERROR_GROUP);
           return resolve(false);
         }
         resolve(true);
@@ -72,7 +72,7 @@ export class DbConnection {
     return new Promise<boolean>(resolve => {
       this._connection.rollback((err: MysqlError) => {
         if (err) {
-          this.logger.warn(`Rollback Error: ${err.errno} -> ${err.message}`);
+          this.logger.warn(`Rollback Error: ${err.errno} -> ${err.message}`, DB_ERROR_GROUP);
           return resolve(false);
         }
         resolve(true);
@@ -164,9 +164,9 @@ export class DbConnection {
     return new Promise<any>(((resolve, reject) => {
       connection.query(sql, values, (err: MysqlError, result) => {
         if (err) {
-          this.logger.error(`Action (${action}) Error: ${err.errno} -> ${err.message}`);
-          this.logger.error(`Sql:\n${err.sql}`);
-          this.logger.error(`Stack: \n${err.stack}`);
+          this.logger.warn(`Action (${action}) Error: ${err.errno} -> ${err.message}`, DB_ERROR_GROUP);
+          this.logger.warn(`Sql:\n${err.sql}`, DB_ERROR_GROUP);
+          this.logger.warn(`Stack: \n${err.stack}`, DB_ERROR_GROUP);
           return reject(queryError(err));
         }
         resolve(result);
@@ -186,7 +186,7 @@ export class DbConnection {
     return new Promise<PoolConnection>(((resolve, reject) => {
       this._pool.getConnection(((err: MysqlError, connection: PoolConnection) => {
         if (err) {
-          this.logger.error(`Conn Error: ${err.errno} -> ${err.message}`);
+          this.logger.error(`Conn Error: ${err.errno} -> ${err.message}`, DB_ERROR_GROUP);
           return reject(connectError(err));
         }
         resolve(connection);

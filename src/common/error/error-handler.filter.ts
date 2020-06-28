@@ -1,6 +1,12 @@
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { getStageMode, StageMode } from '../../app.config';
 import { CommonError, ErrorBody } from './index';
+
+/**
+ * The error context in the logger message
+ */
+const ERROR_CONTEXT = 'error';
 
 /**
  * The filter process the {@link CommonError} and build the response.
@@ -36,13 +42,13 @@ export class ErrorHandlerFilter implements ExceptionFilter {
       group: exception.group,
       code: exception.code,
       message: exception.message,
-      stack,
+      stack: getStageMode() === StageMode.Dev ? stack : null,
       data,
     };
 
     // show the error
-    this.logger.error(`${method}: ${url} => [${body.group}.${body.code}] ${body.message}`);
-    this.logger.debug(`\n${JSON.stringify(body, null, 2)}`);
+    this.logger.warn(`${method}: ${url} => [${body.group}.${body.code}] ${body.message}`, ERROR_CONTEXT);
+    this.logger.debug(`\n${JSON.stringify(body, null, 2)}`, ERROR_CONTEXT);
 
     response
       .status(statusCode)
