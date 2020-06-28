@@ -1,6 +1,5 @@
 import { ArgumentsHost, Catch, ExceptionFilter, Logger } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { getStageMode, StageMode } from '../../app.config';
 import { CommonError, ErrorBody } from './index';
 
 /**
@@ -9,17 +8,36 @@ import { CommonError, ErrorBody } from './index';
 const ERROR_CONTEXT = 'error';
 
 /**
+ * The options for the {@link ErrorHandlerFilter}
+ */
+export interface IErrorHandlerOptions {
+
+  /**
+   * Add or not the error stack.
+   */
+  useStack: boolean;
+
+  /**
+   * The nest js logger
+   */
+  logger: Logger;
+}
+
+/**
  * The filter process the {@link CommonError} and build the response.
  */
 @Catch(CommonError)
 export class ErrorHandlerFilter implements ExceptionFilter {
 
+  private readonly logger: Logger;
+
   /**
    * Create the instance of filter
    *
-   * @param {Logger} logger the logger
+   * @param options the configuration
    */
-  constructor(private logger: Logger) {
+  constructor(private options: IErrorHandlerOptions) {
+    this.logger = options.logger;
   }
 
   catch(exception: CommonError, host: ArgumentsHost): any {
@@ -42,7 +60,7 @@ export class ErrorHandlerFilter implements ExceptionFilter {
       group: exception.group,
       code: exception.code,
       message: exception.message,
-      stack: getStageMode() === StageMode.Dev ? stack : null,
+      stack: this.options.useStack === true ? stack : null,
       data,
     };
 

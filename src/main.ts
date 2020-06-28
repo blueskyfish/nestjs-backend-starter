@@ -42,7 +42,7 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
   app.useGlobalFilters(
-    new ErrorHandlerFilter(logger),
+    new ErrorHandlerFilter({ logger, useStack: isDev }),
   );
   app.useGlobalPipes(
     new ValidationPipe({
