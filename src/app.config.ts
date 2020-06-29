@@ -90,6 +90,11 @@ export enum EnvName {
    * Environment variable for the filename of the public key
    */
   AuthPubFile = 'AUTH_PUB_FILE',
+
+  /**
+   * Environment variable for the digest secret in order of hash the password of the user.
+   */
+  DigestSecret = 'DIGEST_SECRET',
 }
 
 /**

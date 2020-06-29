@@ -32,6 +32,7 @@ import { UserController } from './controller/user.controller';
     AppAuthModule.forRoot({
       priKeyFilename: fromEnv(EnvName.AuthPriFile).asString,
       pubKeyFilename: fromEnv(EnvName.AuthPubFile).asString,
+      digestSecret: fromEnv(EnvName.DigestSecret).asString,
     }),
     AppControllerModule,
   ],

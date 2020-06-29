@@ -18,7 +18,11 @@ describe('CryptService', () => {
         CryptoService,
         {
           provide: CryptoConfig,
-          useFactory: async () => await cryptoFactory(priKeyFilename, pubKeyFilename),
+          useFactory: async () => await cryptoFactory(
+            priKeyFilename,
+            pubKeyFilename,
+            'ABC123'
+          ),
         },
       ]
     }).compile();

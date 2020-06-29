@@ -52,7 +52,7 @@ export class CryptoService {
       throw new RequiredError('password', 'digest requires parameter "password"')
     }
 
-    const value = `${this.config.passwordSalt}${prefix}${password}`;
+    const value = `${this.config.digestSecret}${prefix}${password}`;
 
     return createHash(HASH_FUNC).update(value).digest(ENCODE_HEX);
   }

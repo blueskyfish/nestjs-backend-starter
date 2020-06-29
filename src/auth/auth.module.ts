@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common';
 import { IAuthConfig } from './auth.config';
-import { CryptoConfig } from './crypto';
+import { CryptoConfig } from './crypto/crypto.config';
 import { cryptoFactory } from './crypto/crypto.factory';
 import { CryptoService } from './crypto/crypto.service';
 import { PasswordService } from './password';
@@ -36,7 +36,11 @@ export class AppAuthModule {
       providers: [
         {
           provide: CryptoConfig,
-          useFactory: async () => await cryptoFactory(config.priKeyFilename, config.pubKeyFilename),
+          useFactory: async () => await cryptoFactory(
+            config.priKeyFilename,
+            config.pubKeyFilename,
+            config.digestSecret
+          ),
         },
         ...authInternalServices,
         ...authServices

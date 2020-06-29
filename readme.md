@@ -101,6 +101,7 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 | **DB_PASSWORD**     | -              | Yes      | No  | The password of the database user.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
 | **AUTH_PRI_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the private key
 | **AUTH_PUB_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the public key
+| **DIGEST_SECRET**   | -              | Yes      | Yes | Environment variable for the digest secret in order of hash the password of the user. It could be a very long line of text.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
 
 
 ### PM2 Configuration
@@ -120,6 +121,7 @@ const os = require('os');
 
 const userHome = os.homedir();
 const dbPassword = fromEnv('DB_PASSWORD').asString;
+const digestSecret = fromEnv('DIGEST_SECRET').asString;
 
 module.exports = {
   apps: [
@@ -137,7 +139,8 @@ module.exports = {
         'DB_DATABASE': 'databaseName',
         'DB_PASSWORD': dbPassword,
         'AUTH_PRI_FILE': `${userHome}/etc/app/private-key.pem`,
-        'AUTH_PUB_FILE': `${userHome}/etc/app/puplic-key.pem`
+        'AUTH_PUB_FILE': `${userHome}/etc/app/puplic-key.pem`,
+        'DIGEST_SECRET': digestSecret,
       },
       listen_timeout: 5000,
       kill_timeout: 2000,
@@ -156,6 +159,7 @@ The critical environment settings are not setting in the **PM2** configuration f
 
 ```text
 export DB_PASSWORD=xxxx
+export DIGEST_SECRET=Phantasie ist alles. Es ist die Vorschau auf die kommenden Ereignisse des Lebens (Einstein).
 ```
 
 

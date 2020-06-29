@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CryptoConfig } from '../crypto';
+import { CryptoConfig } from '../crypto/crypto.config';
 import { cryptoFactory } from '../crypto/crypto.factory';
 import { CryptoService } from '../crypto/crypto.service';
 import { VerifierError } from './verifier.error';
@@ -24,7 +24,11 @@ describe('VerifierService', () => {
         VerifierService,
         {
           provide: CryptoConfig,
-          useFactory: async () => await cryptoFactory(priKeyFilename, pubKeyFilename),
+          useFactory: async () => await cryptoFactory(
+            priKeyFilename,
+            pubKeyFilename,
+            'ABC123'
+          ),
         }
       ]
     }).compile();
