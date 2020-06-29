@@ -30,6 +30,11 @@ export enum EnvName {
   PORT = 'PORT',
 
   /**
+   * The application home directory. It contains several sub directory
+   */
+  AppHome = 'APP_HOME',
+
+  /**
    * The hostname of the database you are connecting to. (Default `localhost`)
    */
   DbHost = 'DB_HOST',

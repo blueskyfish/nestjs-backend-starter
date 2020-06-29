@@ -94,6 +94,7 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 |---------------------|----------------|:--------:|:---:|--------------------------------------------------------
 | **PORT**            | -              | Yes      | Yes | The port of the server being listen for request
 | **HOST**            | `localhost`    | No       | Yes | The host name of the server
+| **APP_HOME**        | -              | No       | No  | The application home directory. From the `HOME` directory are several sub directory with files.
 | **DB_PORT**         | `3306`         | No       | Yes | The port of the database service
 | **DB_HOST**         | `localhost`    | No       | Yes | The host name of the database server
 | **DB_USER**         | -              | Yes      | Yes | The database user

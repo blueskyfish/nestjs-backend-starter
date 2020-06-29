@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiProduces, ApiTags } from '@nestjs/swagger';
-import { SystemService } from '../business/system/system.service';
+import { About, Alive, AliveService, SystemService } from '../business/system';
 import { ErrorBody } from '../common/error';
 import { HelloParams } from './params';
 
@@ -8,7 +8,7 @@ import { HelloParams } from './params';
 @Controller()
 export class SystemController {
 
-  constructor(private appService: SystemService) {}
+  constructor(private systemService: SystemService, private aliveService: AliveService) {}
 
   @ApiOperation({
     description: 'Get hello world',
@@ -25,8 +25,35 @@ export class SystemController {
     description: 'The validation error message',
     type: ErrorBody
   })
-  @Get(['/'])
+  @Get('/')
   getHello(@Query() params: HelloParams): string {
-    return this.appService.getHello(params.name);
+    return this.systemService.getHello(params.name);
+  }
+
+  @ApiOperation({
+    description: 'Get alive entity from the backend',
+    operationId: 'alive'
+  })
+  @ApiProduces('application/json')
+  @ApiOkResponse({
+    description: 'The alive entity',
+    type: Alive
+  })
+  @Get('/alive')
+  alive(): Alive {
+    return this.aliveService.alive();
+  }
+
+  @ApiOperation({
+    description: 'Get the about information',
+    operationId: 'getAbout'
+  })
+  @ApiOkResponse({
+    description: 'The about entity',
+    type: About
+  })
+  @Get('/about')
+  async getAbout(): Promise<About> {
+    return await this.systemService.getAbout();
   }
 }

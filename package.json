@@ -43,7 +43,8 @@
     "start:docker": "docker-compose up -d",
     "stop:docker": "docker-compose down",
     "reset:docker": "yarn stop:docker && rimraf var && yarn start:docker",
-    "logs:docker": "docker-compose logs -f"
+    "logs:docker": "docker-compose logs -f",
+    "generate:about": "ts-node ./generate-about.ts"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.9",
@@ -56,6 +57,7 @@
     "cron": "^1.8.2",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "moment-duration-format": "^2.3.2",
     "mysql": "^2.18.1",
     "randomstring": "^1.1.5",
     "reflect-metadata": "^0.1.13",
@@ -73,6 +75,7 @@
     "@types/express": "^4.17.3",
     "@types/jest": "25.2.1",
     "@types/lodash": "^4.14.150",
+    "@types/moment-duration-format": "^2.2.2",
     "@types/mysql": "^2.15.10",
     "@types/node": "^13.13.0",
     "@types/randomstring": "^1.1.6",
@@ -83,6 +86,7 @@
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-import": "^2.20.1",
+    "git-repo-info": "^2.1.1",
     "jest": "^25.5.0",
     "prettier": "^2.0.5",
     "supertest": "^4.0.2",
