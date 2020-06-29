@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppRepositoryModule } from '../repository/repository.module';
-import { SystemService } from './system/system.service';
+import { AliveService, SystemService } from './system';
 import { UserService } from './user';
 
 // Here are the service for global using in other modules
 const businessServices: any[] = [
+  AliveService,
   UserService,
   SystemService,
 ];

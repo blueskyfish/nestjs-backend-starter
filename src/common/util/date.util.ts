@@ -1,6 +1,7 @@
 import * as moment from 'moment';
-import { Moment } from 'moment';
+import { DurationInputArg2, Moment } from 'moment';
 import * as _ from 'lodash';
+import 'moment-duration-format';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const TIME_FORMAT = 'HH:mm';
@@ -92,5 +93,23 @@ export class DateUtil {
         break;
       }
     }
+  }
+
+  /**
+   * formatting the duration.
+   *
+   * @param {number | Date | moment.Moment} diff the different as number or Date or Moment
+   * @param {moment.unitOfTime.DurationAs} unit the unit of the duration
+   * @param {string} formatPattern the patting of output
+   * @return {string}
+   */
+  static formatDuration(diff: number | Date | Moment, unit: DurationInputArg2, formatPattern: string): string {
+    if (_.isDate(diff)) {
+      diff = moment(diff);
+    }
+    if (moment.isMoment(diff)) {
+      diff = diff.diff(DateUtil.now(), unit)
+    }
+    return moment.duration(diff, unit).format(formatPattern);
   }
 }
