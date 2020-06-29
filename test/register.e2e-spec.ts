@@ -1,13 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
-import { Response } from 'supertest';
 import { HTTP_AUTH_HEADER } from '../src/auth';
 import { RegisterPayload } from '../src/business/user/entities';
 import { DbService } from '../src/common/database';
 import { TestModule } from './test.module';
-
-jest.setTimeout(120000);
 
 describe('RegisterController (e2e)', () => {
 
@@ -27,7 +24,7 @@ describe('RegisterController (e2e)', () => {
     const dbService = app.get(DbService);
     const conn = dbService.getConnection();
     try {
-      let result = await conn.query('TRUNCATE TABLE `starter_users`');
+      const result = await conn.query('TRUNCATE TABLE `starter_users`');
       console.debug('> Debug: truncate "users" =>', result);
     } finally {
       conn.release();

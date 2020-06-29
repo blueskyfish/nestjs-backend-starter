@@ -25,7 +25,7 @@ export class TimeUtil {
    * @param {number} days the days (default is `0`)
    * @returns {number} the seconds from now plus delta
    */
-  static fromNow(minutes: number, hours: number = 0, days: number = 0): number {
+  static fromNow(minutes: number, hours = 0, days = 0): number {
     return TimeUtil.now() +
       TimeUtil.fromMinutes(minutes) +
       TimeUtil.fromHours(hours) +

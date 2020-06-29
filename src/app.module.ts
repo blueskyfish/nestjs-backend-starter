@@ -1,5 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { RouteInfo } from '@nestjs/common/interfaces';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { EnvName } from './app.config';
 import { AppAuthModule } from './auth/auth.module';
@@ -42,10 +41,6 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): any {
 
     const publicRoutes = ['/', '/check', '/about', '/login', '/register'];
-    const allRoutes: RouteInfo = {
-      path: '*',
-      method: RequestMethod.ALL,
-    };
 
     consumer
       .apply(AuthMiddleware)

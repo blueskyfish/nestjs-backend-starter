@@ -146,6 +146,7 @@ export class DbService implements OnApplicationShutdown {
     }));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async onApplicationShutdown(signal?: string): Promise<any> {
     await this.shutdown();
   }

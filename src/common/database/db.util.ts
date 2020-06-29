@@ -18,7 +18,7 @@ export class DbUtil {
    * @param {string} sign the separator sign
    * @returns {string} the adjusted error code for the {@link DbError}
    */
-  static adjustAndLower(errorCode: string, sign: string = '-'): string {
+  static adjustAndLower(errorCode: string, sign = '-'): string {
     if (_.isNil(errorCode)) {
       return '';
     }
@@ -46,7 +46,6 @@ export class DbUtil {
    */
   static getValue<T>(defValue: T, value?: T, min?: number): T {
     const isNumber = typeof defValue === 'number';
-    const isString = typeof defValue === 'string';
 
     if (_.isNil(value) || (isNumber && isNaN(value as any))) {
       return defValue;

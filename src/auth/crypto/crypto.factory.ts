@@ -11,7 +11,8 @@ import { CryptoConfig } from './crypto.config';
  * @param digestSecret the digest secret
  * @returns {Promise<CryptoConfig>}
  */
-export async function cryptoFactory(priKeyFilename: string, pubKeyFilename: string, digestSecret: string): Promise<CryptoConfig> {
+export async function cryptoFactory(
+  priKeyFilename: string, pubKeyFilename: string, digestSecret: string): Promise<CryptoConfig> {
 
   const privateKey = await readKey(priKeyFilename);
   const publicKey = await readKey(pubKeyFilename);

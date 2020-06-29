@@ -7,6 +7,33 @@ const PREFIX = '<:';
 const POSTFIX = ':>';
 const SEPARATOR = ':><:';
 
+
+/**
+ * Internal helper function for extract values from formatted password
+ *
+ * @param {string} formattedPassword the password
+ * @param {number} index the index of wanted value
+ * @returns {string | null} the value or null
+ */
+function splitAndGet(formattedPassword: string, index: number): string | null {
+  if (!ValidUtil.notEmpty(formattedPassword)) {
+    return null;
+  }
+
+  if (!formattedPassword.startsWith(PREFIX) || !formattedPassword.endsWith(POSTFIX)) {
+    return null;
+  }
+
+  const values = formattedPassword.substring(PREFIX.length, formattedPassword.length - POSTFIX.length);
+
+  if (!ValidUtil.notEmpty(values)) {
+    return null;
+  }
+
+  const parts = values.split(SEPARATOR);
+  return parts[index] || null;
+}
+
 /**
  * Build the password from 3 parts
  * @param {string} salt the user salt
@@ -64,30 +91,4 @@ export function generateSalt(): string {
     readable: true,
     charset: 'alphanumeric'
   });
-}
-
-/**
- * Internal helper function for extract values from formatted password
- *
- * @param {string} formattedPassword the password
- * @param {number} index the index of wanted value
- * @returns {string | null} the value or null
- */
-function splitAndGet(formattedPassword: string, index: number): string | null {
-  if (!ValidUtil.notEmpty(formattedPassword)) {
-    return null;
-  }
-
-  if (!formattedPassword.startsWith(PREFIX) || !formattedPassword.endsWith(POSTFIX)) {
-    return null;
-  }
-
-  const values = formattedPassword.substring(PREFIX.length, formattedPassword.length - POSTFIX.length);
-
-  if (!ValidUtil.notEmpty(values)) {
-    return null;
-  }
-
-  const parts = values.split(SEPARATOR);
-  return parts[index] || null;
 }

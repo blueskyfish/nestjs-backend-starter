@@ -33,7 +33,7 @@ export class NumberUtil {
     return s as number;
   }
 
-  static toFixed(s: number | string, digit: number = 2): string {
+  static toFixed(s: number | string, digit = 2): string {
     if (typeof s === 'string') {
       s = NumberUtil.toInt(s);
     }

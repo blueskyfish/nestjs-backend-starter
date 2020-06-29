@@ -10,20 +10,20 @@ export const asyncForEach = async <T>(list: T[], callback: DataFunc<T>): Promise
 };
 
 export const forEachIterator = <T>(it: IterableIterator<T>, callback: DataFunc<T>) => {
-  for (let value of it) {
+  for (const value of it) {
     callback(value);
   }
 };
 
 export const asyncForEachIterator = async <T>(it: IterableIterator<T>, callback: DataFunc<T>): Promise<void> => {
-  for (let value of it) {
+  for (const value of it) {
     await callback(value);
   }
 };
 
 export const mapIterator = <T, R>(it: IterableIterator<T>, callback: MapFunc<T, R>): R[] => {
   const list: R[] = [];
-  for (let value of it) {
+  for (const value of it) {
     list.push(callback(value));
   }
   return list;
