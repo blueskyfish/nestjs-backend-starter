@@ -68,7 +68,7 @@ The Mysql / MariaDB database engine is running in docker container instance. The
 
 | Name                       | Description
 |----------------------------|------------------------------------------
-| `docker-compose.yml`       | The docker compose for the mysql database- and phpMyAdmin image.<br>It is depend on the file `docker.env`.
+| `docker-compose.yml`       | The docker compose for the mysql database- and phpMyAdmin image.<br>It is depend on the file `docker-compose.env`.
 | `docker.compose.env`       | The environment variables for the mysql server.
 | `docker/db`                | The docker directory with the mysql configuration
 | `docker/db/Dockerfile`     | The MySQL Docker file.
@@ -105,7 +105,7 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 
 ### PM2 Configuration
 
-PM2 is configured via a javascript config file. The file name must end with `config.js`.
+[PM2](PM2) is configured via a javascript config file. The file name must end with `config.js`.
 
 
 **An excerpt from the configuration**
@@ -173,8 +173,8 @@ export DB_PASSWORD=xxxx
 
 * A Request receives the backend controller
 * The controller forwards the request to the service
-* The service use the business to create a repository and process the specified steps and returns the response
-* The business service close the repository
+* The service use the repository service to open a repository pool and process the specified steps and returns the response
+* The business service close the repository pool
 * If no error has occurred the response will send to the client
 * In case of an error the error body will send to the client.
 
@@ -199,17 +199,15 @@ The roles are used to determine whether the user has the necessary rights to exe
 ```json
 {
   "id": 4711,
-  "device": 34948,
   "roles": ["read", "write", "admin"]
 }
 ```
 
 ### Authorisations
 
-A user must log in with his email and password. If both are correct, a device id is created and created together with
-the user's roles to an Authenticated User.
+A user must log in with his email and password. If both are correct, the user id and the user's roles are together the Authenticated User.
 
-This user is encrypted with a private key and can be decrypted with the public key in the authentication process.
+This auth user is encrypted with a private key and can be decrypted with the public key in the authentication process.
 
 
 #### Authentication
@@ -219,21 +217,17 @@ A logged in user is required in protected endpoints. The client must send this i
 In the middleware service, the authenticated user will extract from the header (*decrypted with the public key*) and checked
 with the included device whether the user still known and valid with his device.
 
-How long a user device is valid can be defined with the environment variable **AUTH_EXPIRES** (*the time unit is seconds*)
-
-If a user is no longer valid with his device, the user must log in again.
-
 If the check fails, a Http Status Code UNAUTHENTICATED is always sent.
 
 
 ### Access to AuthUser
 
-In the endpoint the decorator '@User' can be used.
+In the endpoint the decorator '@GetAuthUser' can be used.
 
 **Example**
 
-```js
-async getBookList(@GetAuthUser() authUser: AuthUser, @Param('authorId') authorId: number): Promise<Book[]> {}
+```ts
+async getBookList(@GetAuthUser() authUser: AuthUser, @Param('themeId') themeId: number): Promise<Book[]> {}
 ```
 
 
@@ -267,3 +261,4 @@ SOFTWARE.
 [NestJS]:https://nestjs.com/
 [Typescript]:https://www.typescriptlang.org/
 [OpenApiSpec]:https://www.openapis.org/
+[PM2]:https://pm2.keymetrics.io/
