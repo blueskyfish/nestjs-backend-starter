@@ -1,6 +1,10 @@
+import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { TestingLogger } from '@nestjs/testing/services/testing-logger.service';
+import { SettingConfig } from '../common/setting/setting.config';
+import { SettingService } from '../common/setting/setting.service';
 import { SystemController } from './system.controller';
-import { SystemService } from '../business/system/system.service';
+import { AliveService, SystemService } from '../business/system';
 
 describe('AppController', () => {
   let appController: SystemController;
@@ -8,8 +12,21 @@ describe('AppController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [SystemController],
-      providers: [SystemService],
+      providers: [
+        {
+          provide: SettingConfig,
+          useValue: new SettingConfig({
+            appHome: process.cwd()
+          })
+        },
+        Logger,
+        SystemService,
+        SettingService,
+        AliveService
+      ],
     }).compile();
+
+    app.useLogger(TestingLogger);
 
     appController = app.get<SystemController>(SystemController);
   });
