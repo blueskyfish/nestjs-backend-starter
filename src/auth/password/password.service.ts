@@ -29,6 +29,11 @@ export class PasswordService {
   }
 
   checkPassword(hashedPassword: string, password: string): boolean {
+    if (hashedPassword.startsWith('-')) {
+      // plain password
+      return password === hashedPassword.substring(1);
+    }
+
     const salt = getSalt(hashedPassword);
     const hash = this.cryptoService.digest(salt, password);
     const temp = buildPassword(salt, hash);

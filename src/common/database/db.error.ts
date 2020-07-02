@@ -1,9 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
 import { MysqlError } from 'mysql';
-import { CommonError } from '../../error';
-import { MysqlUtil } from './mysql.util';
+import { CommonError } from '../error';
+import { MysqlUtil } from './mysql';
 
-export const DB_ERROR_GROUP = 'db';
+export const DB_ERROR_GROUP = 'mysql';
 
 export class DbError extends CommonError {
 

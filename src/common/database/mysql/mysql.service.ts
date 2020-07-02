@@ -3,16 +3,17 @@ import { Moment } from 'moment';
 import { createPool, MysqlError, Pool, PoolConnection } from 'mysql';
 import { DateUtil, forEachIterator } from '../../util';
 import { NULL_VALUE } from '../db.config';
+import { IDatabaseService } from '../kind';
 import { MysqlConfig } from './mysql.config';
-import { DbConnection } from './db.connection';
-import { DB_ERROR_GROUP } from './db.error';
+import { MysqlConnection } from './mysql.connection';
+import { DB_ERROR_GROUP } from '../db.error';
 import { MysqlUtil } from './mysql.util';
 
 /**
  * Manages the database connection pool
  */
 @Injectable()
-export class DbService implements OnApplicationShutdown {
+export class MysqlService implements OnApplicationShutdown, IDatabaseService {
 
   /**
    * A map with the error codes and the counts of occasion
@@ -106,10 +107,14 @@ export class DbService implements OnApplicationShutdown {
   /**
    * Get an database connection. No connection is open yet, it is only created the first time you use it.
    *
-   * @returns {DbConnection}
+   * @returns {MysqlConnection}
    */
-  getConnection(): DbConnection {
-    return new DbConnection(this.logger, this._pool);
+  getConnection(): MysqlConnection {
+    return new MysqlConnection(this.logger, this._pool);
+  }
+
+  async release(): Promise<void> {
+    await this.shutdown();
   }
 
   private async shutdown(): Promise<void> {
