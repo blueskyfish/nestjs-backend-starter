@@ -1,4 +1,4 @@
-import { DbConnection } from '../../common/database';
+import { IDatabaseConnection } from '../../common/database/kind';
 import { IRepository } from './repository';
 import { UserRepository } from './user';
 
@@ -9,10 +9,10 @@ export class RepositoryPool implements IRepository {
 
   private _userRepository: UserRepository = null;
 
-  constructor(private _conn: DbConnection) {
+  constructor(private _conn: IDatabaseConnection) {
   }
 
-  get conn(): DbConnection {
+  get conn(): IDatabaseConnection {
     return this._conn;
   }
 

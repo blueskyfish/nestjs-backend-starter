@@ -1,8 +1,8 @@
-import { DbConnection } from '../../common/database';
+import { IDatabaseConnection } from '../../common/database/kind';
 
 export interface IRepository {
 
-  readonly conn: DbConnection;
+  readonly conn: IDatabaseConnection;
 
   close(): void;
 }

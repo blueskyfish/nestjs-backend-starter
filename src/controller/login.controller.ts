@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Put } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { LoginPayload, LoginUser } from '../business/user/entities';
 import { UserService } from '../business/user';
@@ -26,7 +26,7 @@ export class LoginController {
     description: 'The user login is failed',
     type: ErrorBody
   })
-  @Post('/login')
+  @Put('/login')
   async login(@Body() payload: LoginPayload): Promise<LoginUser> {
     return await this.userService.login(payload);
   }
