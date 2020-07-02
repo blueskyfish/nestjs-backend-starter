@@ -1,22 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { AuthMiddleware } from '../src/auth/user';
-import { DEFAULT_DB_HOST } from '../src/common/database';
-import { SystemController } from '../src/controller/system.controller';
-import { SystemService } from '../src/business/system/system.service';
+import * as path from 'path';
 import { AppAuthModule } from '../src/auth/auth.module';
+import { AuthMiddleware } from '../src/auth/user';
 import { AppBusinessModule } from '../src/business/business.module';
+import { SystemService } from '../src/business/system';
 import { AppCommonModule } from '../src/common/common.module';
 import { LoginController } from '../src/controller/login.controller';
 import { RegisterController } from '../src/controller/register.controller';
+import { SystemController } from '../src/controller/system.controller';
 import { UserController } from '../src/controller/user.controller';
-import {
-  TEST_AUTH_PRI_FILENAME,
-  TEST_AUTH_PUB_FILENAME,
-  TEST_DB_DATABASE,
-  TEST_DB_PASSWORD,
-  TEST_DB_PORT,
-  TEST_DB_USER
-} from './test.settings';
+import { TEST_AUTH_PRI_FILENAME, TEST_AUTH_PUB_FILENAME } from './test.settings';
 
 /**
  * The test module
@@ -24,12 +17,11 @@ import {
 @Module({
   imports: [
     AppCommonModule.forRoot({
-      host: DEFAULT_DB_HOST,
-      port: TEST_DB_PORT,
-      user: TEST_DB_USER,
-      database: TEST_DB_DATABASE,
-      password: TEST_DB_PASSWORD,
-      connectLimit: 20,
+      db: {
+        type: 'sqlite',
+        filename: path.join(process.cwd(), 'test', 'starter.db'),
+      },
+      appHome: process.cwd(),
     }),
     AppAuthModule.forRoot({
       priKeyFilename: TEST_AUTH_PRI_FILENAME,
