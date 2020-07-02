@@ -18,6 +18,8 @@ describe('SystemController (e2e)', () => {
     await app.init();
   });
 
+  afterAll(async () => await app.close());
+
   it('/ (GET)', async () => {
     const helloRes = await request(app.getHttpServer())
       .get('/?name=Susi')

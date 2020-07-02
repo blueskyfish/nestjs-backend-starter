@@ -9,6 +9,7 @@ import { TokenService } from '../token';
 
 describe('VerifierService', () => {
 
+  let app: TestingModule = null;
   let tokenService: TokenService = null;
   let verifierService: VerifierService = null;
 
@@ -17,7 +18,7 @@ describe('VerifierService', () => {
     const priKeyFilename = 'test-private.pem';
     const pubKeyFilename = 'test-public.pem';
 
-    const app: TestingModule = await Test.createTestingModule({
+    app = await Test.createTestingModule({
       providers: [
         CryptoService,
         TokenService,
@@ -37,6 +38,8 @@ describe('VerifierService', () => {
     verifierService = app.get(VerifierService);
 
   });
+
+  afterAll(async () => await app.close());
 
   describe('Encrypt Token', () => {
 

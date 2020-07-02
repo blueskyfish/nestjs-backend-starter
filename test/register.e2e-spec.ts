@@ -22,7 +22,6 @@ const SQL_FIND_USER = [
 describe('Register User', () => {
 
   let app: INestApplication = null;
-
   let userId: number = null;
 
   beforeAll(async () => {

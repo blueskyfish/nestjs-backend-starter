@@ -6,6 +6,7 @@ import { PasswordService } from './password.service';
 
 describe('Password Service', () => {
 
+  let app: TestingModule = null;
   let passwordService: PasswordService = null;
 
   beforeEach(async () => {
@@ -13,7 +14,7 @@ describe('Password Service', () => {
     const priKeyFilename = 'test-private.pem';
     const pubKeyFilename = 'test-public.pem';
 
-    const app: TestingModule = await Test.createTestingModule({
+    app = await Test.createTestingModule({
       providers: [
         CryptoService,
         PasswordService,
@@ -30,6 +31,8 @@ describe('Password Service', () => {
 
     passwordService = app.get(PasswordService);
   });
+
+  afterAll(async () => await app.close());
 
   describe('password and check password', () => {
 

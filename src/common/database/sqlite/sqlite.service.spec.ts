@@ -14,11 +14,12 @@ interface IDbUser {
 
 describe('Sqlite Service', () => {
 
+  let app: TestingModule = null;
   let sqliteService: SqliteService = null;
 
   beforeAll(async () => {
 
-    const app: TestingModule = await Test.createTestingModule({
+    app = await Test.createTestingModule({
       providers: [
         Logger,
         {
@@ -36,6 +37,8 @@ describe('Sqlite Service', () => {
 
     sqliteService = app.get(SqliteService);
   });
+
+  afterAll(async () => await app.close());
 
   describe('Use Sqlite Service', () => {
 

@@ -7,10 +7,12 @@ import { SystemController } from './system.controller';
 import { AliveService, SystemService } from '../business/system';
 
 describe('AppController', () => {
+
+  let app: TestingModule = null;
   let appController: SystemController;
 
   beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+    app = await Test.createTestingModule({
       controllers: [SystemController],
       providers: [
         {
@@ -30,6 +32,8 @@ describe('AppController', () => {
 
     appController = app.get<SystemController>(SystemController);
   });
+
+  afterAll(async () => await app.close());
 
   describe('root', () => {
     it('should return "Hello Susi!"', () => {

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import { promisify } from 'util';
 import * as _ from 'lodash';
@@ -12,7 +12,7 @@ export class SystemService {
 
   private aboutData: About = null;
 
-  constructor(private setting: SettingService) {
+  constructor(private logger: Logger, private setting: SettingService) {
   }
 
   getHello(name: string): string {
@@ -25,10 +25,24 @@ export class SystemService {
    */
   async getAbout(): Promise<About> {
     if (_.isNil(this.aboutData)) {
-      (this.aboutData as any) = {};
-      const filename = this.setting.getDataFile('about.json');
-      const value = await readFileAsync(filename, 'utf8');
-      this.aboutData = JSON.parse(value);
+      try {
+        const filename = this.setting.getDataFile('about.json');
+        const value = await readFileAsync(filename, 'utf8');
+        this.aboutData = JSON.parse(value);
+      } catch (e) {
+        this.logger.warn(`Read about with error (${e.message})`, 'about');
+
+        this.aboutData = {
+          name: '??',
+          author: '??',
+          version: '??',
+          description: '??',
+          branch: '??',
+          branchDate: '??',
+          commit: '??',
+          commitDate: '??',
+        }
+      }
     }
     return this.aboutData;
   }

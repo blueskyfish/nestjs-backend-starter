@@ -21,9 +21,7 @@ describe('User Login', () => {
     await app.init();
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
+  afterAll(async () => await app.close());
 
   it('User Login and get Info', async () => {
     const data: LoginPayload = {

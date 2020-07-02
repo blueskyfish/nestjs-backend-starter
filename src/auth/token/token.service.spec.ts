@@ -7,13 +7,14 @@ import { TokenService } from './token.service';
 
 describe('KeeperService', () => {
 
+  let app: TestingModule = null;
   let tokenService: TokenService = null;
 
   beforeEach(async () => {
     const priKeyFilename = 'test-private.pem';
     const pubKeyFilename = 'test-public.pem';
 
-    const app: TestingModule = await Test.createTestingModule({
+    app = await Test.createTestingModule({
       providers: [
         CryptoService,
         TokenService,
@@ -30,6 +31,8 @@ describe('KeeperService', () => {
 
     tokenService = app.get(TokenService);
   });
+
+  afterAll(async () => await app.close());
 
   describe('Create Token "from"', () => {
 

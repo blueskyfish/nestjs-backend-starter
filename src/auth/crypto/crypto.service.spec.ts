@@ -6,6 +6,7 @@ import { CryptoService } from './crypto.service';
 
 describe('CryptService', () => {
 
+  let app: TestingModule = null;
   let cryptoService: CryptoService = null;
 
   beforeEach(async () => {
@@ -13,7 +14,7 @@ describe('CryptService', () => {
     const priKeyFilename = 'test-private.pem';
     const pubKeyFilename = 'test-public.pem';
 
-    const app: TestingModule = await Test.createTestingModule({
+    app = await Test.createTestingModule({
       providers: [
         CryptoService,
         {
@@ -29,6 +30,8 @@ describe('CryptService', () => {
 
     cryptoService = app.get<CryptoService>(CryptoService);
   });
+
+  afterAll(async () => await app.close());
 
   describe('Encrypt & Decrypt', () => {
 
