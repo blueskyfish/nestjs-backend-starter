@@ -1,6 +1,5 @@
 
-export * from './db.config';
-export * from './db.connection';
-export * from './db.error';
-export * from './db.service';
-export * from './db.util';
+export * from './mysql.config';
+export * from './mysql.connection';
+export * from './mysql.service';
+export * from './mysql.util';

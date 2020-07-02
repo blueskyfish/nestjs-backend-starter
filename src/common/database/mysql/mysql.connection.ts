@@ -1,7 +1,8 @@
 import { Logger } from '@nestjs/common';
 import * as _ from 'lodash';
 import { Connection, MysqlError, Pool, PoolConnection } from 'mysql';
-import { connectError, DB_ERROR_GROUP, queryError, transactionError } from './db.error';
+import { connectError, DB_ERROR_GROUP, queryError, transactionError } from '../db.error';
+import { IDatabaseConnection } from '../kind';
 
 // Kind of execution
 export type ExecutionAction = 'select' | 'insert' | 'update' | 'delete' | 'query';
@@ -22,7 +23,7 @@ export type ExecutionAction = 'select' | 'insert' | 'update' | 'delete' | 'query
  * * `commit()` is commit an open transaction
  * * `rollback()` is rollback an open transaction.
  */
-export class DbConnection {
+export class MysqlConnection implements IDatabaseConnection {
   private _connection: PoolConnection = null;
 
   constructor(private readonly logger: Logger, private _pool: Pool) {
@@ -198,7 +199,7 @@ export class DbConnection {
   /**
    * This should not call directly. It execute on response event `finish`.
    */
-  release(): void {
+  async release(): Promise<void> {
     if (this._connection) {
       this._connection.release();
       this._connection = null;

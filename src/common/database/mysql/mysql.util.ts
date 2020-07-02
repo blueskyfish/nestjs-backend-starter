@@ -9,7 +9,7 @@ const ERROR_PREFIX = [
   'ER_',
 ]
 
-export class DbUtil {
+export class MysqlUtil {
 
   /**
    * Adjust the codes from the mysql errors to the error exception
