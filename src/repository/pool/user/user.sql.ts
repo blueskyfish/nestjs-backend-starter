@@ -38,9 +38,7 @@ export const SQL_FIND_USER_FROM_EMAIL = [
  * @see {@link IDbInsertUser}
  */
 export const SQL_INSERT_USER = [
-  'INSERT INTO ', RepositoryNames.Users, ' SET', NL,
-  '  `name` = {name},', NL,
-  '  `email` = {email},', NL,
-  '  `password` = {password},', NL,
-  '  `roles` = {roles}'
+  'INSERT INTO ', RepositoryNames.Users, NL,
+  '   (`name`, `email`, `password`, `roles`)', NL,
+  'VALUES ({name}, {email}, {password}, {roles})'
 ].join('');

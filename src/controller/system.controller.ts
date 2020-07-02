@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Header, Query } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOkResponse, ApiOperation, ApiProduces, ApiTags } from '@nestjs/swagger';
 import { About, Alive, AliveService, SystemService } from '../business/system';
 import { ErrorBody } from '../common/error';
@@ -26,6 +26,7 @@ export class SystemController {
     type: ErrorBody
   })
   @Get('/')
+  @Header('content-type', 'text/plain')
   getHello(@Query() params: HelloParams): string {
     return this.systemService.getHello(params.name);
   }

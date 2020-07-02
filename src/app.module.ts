@@ -18,16 +18,19 @@ import { UserController } from './controller/user.controller';
 
     AppCommonModule.forRoot({
       // database config
-      host: fromEnv(EnvName.DbHost).asString ,
-      port: fromEnv(EnvName.DbPort).asNumber,
-      user: fromEnv(EnvName.DbUser).asString,
-      database: fromEnv(EnvName.DbDatabase).asString,
-      password: fromEnv(EnvName.DbPassword).asString,
-      connectTimeout: fromEnv(EnvName.DbConnectTimeout).asNumber,
-      connectLimit: fromEnv(EnvName.DbConnectLimit).asNumber,
-      acquireTimeout: fromEnv(EnvName.DbAcquireTimeout).asNumber,
-      waitForConnections: fromEnv(EnvName.DbWaitForConnections).asBool,
-      queueLimit: fromEnv(EnvName.DbQueueLimit).asNumber,
+      db: {
+        type: 'mysql',
+        host: fromEnv(EnvName.DbHost).asString,
+        port: fromEnv(EnvName.DbPort).asNumber,
+        user: fromEnv(EnvName.DbUser).asString,
+        database: fromEnv(EnvName.DbDatabase).asString,
+        password: fromEnv(EnvName.DbPassword).asString,
+        connectTimeout: fromEnv(EnvName.DbConnectTimeout).asNumber,
+        connectLimit: fromEnv(EnvName.DbConnectLimit).asNumber,
+        acquireTimeout: fromEnv(EnvName.DbAcquireTimeout).asNumber,
+        waitForConnections: fromEnv(EnvName.DbWaitForConnections).asBool,
+        queueLimit: fromEnv(EnvName.DbQueueLimit).asNumber,
+      },
 
       // setting config
       appHome: fromEnv(EnvName.AppHome).asString || path.normalize(path.join(__dirname, '..')),
