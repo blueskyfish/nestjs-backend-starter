@@ -95,15 +95,6 @@ describe('Sqlite Escape', () => {
     expect(SqliteEscape.escape(null)).toEqual(NULL_VALUE);
   });
 
-  it('Escape object.toString()', () => {
-    const value = {
-      toString(): string {
-        return 'Hello';
-      }
-    };
-    expect(SqliteEscape.escape(value)).toEqual('\'Hello\'');
-  });
-
   it('Escape Json', () => {
     const value = { id: 4711, name: 'Susi'};
     expect(SqliteEscape.escape(value)).toEqual('\'{"id":4711,"name":"Susi"}\'');

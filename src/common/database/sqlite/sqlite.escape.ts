@@ -48,8 +48,6 @@ export class SqliteEscape {
           return SqliteEscape.escapeBuffer(value);
         } else if (_.isNil(value)) {
           return NULL_VALUE;
-        } else if (typeof value.toString === 'function') {
-          return SqliteEscape.escapeString(value.toString());
         }
         return SqliteEscape.escapeString(JSON.stringify(value));
       case 'string':
