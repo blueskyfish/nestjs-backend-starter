@@ -1,14 +1,29 @@
 import { INestApplication } from '@nestjs/common';
+import * as _ from 'lodash';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { HTTP_AUTH_HEADER } from '../src/auth';
 import { RegisterPayload } from '../src/business/user/entities';
 import { DbService } from '../src/common/database';
+import { NL, RepositoryNames } from '../src/repository/pool/repository.names';
 import { TestModule } from './test.module';
 
-describe('RegisterController (e2e)', () => {
+const SQL_DELETE_USER = [
+  'DELETE FROM ', RepositoryNames.Users, NL,
+  'WHERE user_id = {userId}'
+].join('');
+
+const SQL_FIND_USER = [
+  'SELECT user_id AS userId', NL,
+  'FROM ', RepositoryNames.Users,
+  'WHERE `email` = {email}'
+].join('');
+
+describe('Register User', () => {
 
   let app: INestApplication = null;
+
+  let userId: number = null;
 
   beforeAll(async () => {
 
@@ -21,21 +36,38 @@ describe('RegisterController (e2e)', () => {
     app = testModule.createNestApplication();
     await app.init();
 
-    const dbService = app.get(DbService);
-    const conn = dbService.getConnection();
+    const db = app.get(DbService);
+    const conn = db.getConnection();
     try {
-      const result = await conn.query('TRUNCATE TABLE `starter_users`');
-      console.debug('> Debug: truncate "users" =>', result);
+      const userId = await conn.selectOne<{userId: number}>(SQL_FIND_USER, { email: 'test@test.de'});
+      if (!_.isNil(userId)) {
+        await conn.delete(SQL_DELETE_USER, {userId});
+      }
     } finally {
       conn.release();
     }
   });
 
-  it('/register (POST)', async () => {
+  afterAll(async () => {
+
+    if (!_.isNil(userId)) {
+      const db = app.get(DbService);
+      const conn = db.getConnection();
+      try {
+        await conn.delete(SQL_DELETE_USER, {userId});
+      } finally {
+        conn.release();
+      }
+    }
+
+    await app.close();
+  });
+
+  it('', async () => {
 
     const payload: RegisterPayload = {
       name: 'Test',
-      email: 'test@text.de',
+      email: 'test@test.de',
       password: 'test1234',
       repeat: 'test1234',
       roles: [ 'reader', 'admin' ]
@@ -61,5 +93,7 @@ describe('RegisterController (e2e)', () => {
     expect(userInfoRes.body).not.toBeNull();
 
     expect(userInfoRes.body.name).toEqual(registerRes.body.name);
+
+    userId = userInfoRes.body.id;
   });
 });
