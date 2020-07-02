@@ -1,11 +1,12 @@
 import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
 import { Moment } from 'moment';
 import { createPool, MysqlError, Pool, PoolConnection } from 'mysql';
-import { DateUtil, forEachIterator } from '../util';
-import { DbConfig, NULL_VALUE } from './db.config';
+import { DateUtil, forEachIterator } from '../../util';
+import { NULL_VALUE } from '../db.config';
+import { MysqlConfig } from './mysql.config';
 import { DbConnection } from './db.connection';
 import { DB_ERROR_GROUP } from './db.error';
-import { DbUtil } from './db.util';
+import { MysqlUtil } from './mysql.util';
 
 /**
  * Manages the database connection pool
@@ -29,7 +30,7 @@ export class DbService implements OnApplicationShutdown {
 
   private readonly _pool: Pool;
 
-  constructor(private logger: Logger, private config: DbConfig) {
+  constructor(private logger: Logger, private config: MysqlConfig) {
     // create the pool
     this._pool = createPool({
       host: config.host,
@@ -153,7 +154,7 @@ export class DbService implements OnApplicationShutdown {
 
   private handleEnqueueError(err: MysqlError): void {
     if (err) {
-      const code = DbUtil.adjustAndLower(err.code, '.');
+      const code = MysqlUtil.adjustAndLower(err.code, '.');
       const message = err.sqlMessage;
       const sql = err.sql;
       this.logger.warn(`Error: ${code} => ${message}\n${sql}\n-----`, DB_ERROR_GROUP);

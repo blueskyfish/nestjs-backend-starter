@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { MysqlError } from 'mysql';
-import { CommonError } from '../error';
-import { DbUtil } from './db.util';
+import { CommonError } from '../../error';
+import { MysqlUtil } from './mysql.util';
 
 export const DB_ERROR_GROUP = 'db';
 
@@ -16,7 +16,7 @@ export class DbError extends CommonError {
 }
 
 export const transactionError = (err: MysqlError): DbError => {
-  const code = DbUtil.adjustAndLower(err.code, '.');
+  const code = MysqlUtil.adjustAndLower(err.code, '.');
   const message = err.sqlMessage;
 
   return new DbError(`transaction.${code}`, message);
@@ -29,7 +29,7 @@ export const transactionError = (err: MysqlError): DbError => {
  */
 export const queryError = (err: MysqlError): DbError => {
 
-  const code = DbUtil.adjustAndLower(err.code, '.');
+  const code = MysqlUtil.adjustAndLower(err.code, '.');
   const message = err.sqlMessage;
   const sql = err.sql;
 
@@ -38,7 +38,7 @@ export const queryError = (err: MysqlError): DbError => {
 
 export const connectError = (err: MysqlError): DbError => {
 
-  const code = DbUtil.adjustAndLower(err.code, '.');
+  const code = MysqlUtil.adjustAndLower(err.code, '.');
   const message = err.sqlMessage;
 
   return new DbError(`connect.${code}`, message);

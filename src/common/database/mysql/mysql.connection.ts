@@ -4,7 +4,7 @@ import { Connection, MysqlError, Pool, PoolConnection } from 'mysql';
 import { connectError, DB_ERROR_GROUP, queryError, transactionError } from './db.error';
 
 // Kind of execution
-type ExecutionAction = 'select' | 'insert' | 'update' | 'delete' | 'query';
+export type ExecutionAction = 'select' | 'insert' | 'update' | 'delete' | 'query';
 
 /**
  * The database connection executes sql statements and returns the entities.
