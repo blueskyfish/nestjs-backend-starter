@@ -1,5 +1,8 @@
+import { IMysqlConfig } from './common/database/mysql';
+import { ISqliteConfig } from './common/database/sqlite';
 import { fromEnv } from './common/env';
 import * as _ from 'lodash';
+import { BootstrapError } from './common/error';
 
 /**
  * The default host of the backend server
@@ -33,6 +36,11 @@ export enum EnvName {
    * The application home directory. It contains several sub directory
    */
   AppHome = 'APP_HOME',
+
+  /**
+   * With type of database should be used
+   */
+  DbType = 'DB_TYPE',
 
   /**
    * The hostname of the database you are connecting to. (Default `localhost`)
@@ -87,6 +95,11 @@ export enum EnvName {
   DbQueueLimit = 'DB_QUEUE_LIMIT',
 
   /**
+   * The filename of the **Sqlite** database
+   */
+  DbFile = 'DB_FILE',
+
+  /**
    * Environment variable for the filename of the private key
    */
   AuthPriFile = 'AUTH_PRI_FILE',
@@ -111,4 +124,41 @@ export function getStageMode(): StageMode {
   const value = fromEnv(EnvName.Stage);
 
   return value.hasValue && _.toUpper(value.asString) === 'PROD' ? StageMode.Prod : StageMode.Dev;
+}
+
+/**
+ * The database configuration. It is depend on the environment variable
+ * `DB_TYPE` which configuration will be used
+ *
+ * @return {IMysqlConfig | ISqliteConfig}
+ */
+export function buildDatabaseConfig(): IMysqlConfig | ISqliteConfig {
+  const typeValue = fromEnv(EnvName.DbType);
+  if (!typeValue.hasValue) {
+    throw new BootstrapError('DB_TYPE', 'Database type is required');
+  }
+  const type = _.toLower(typeValue.asString);
+  switch (type) {
+    case 'mysql':
+      return {
+        type: 'mysql',
+        host: fromEnv(EnvName.DbHost).asString,
+        port: fromEnv(EnvName.DbPort).asNumber,
+        user: fromEnv(EnvName.DbUser).asString,
+        database: fromEnv(EnvName.DbDatabase).asString,
+        password: fromEnv(EnvName.DbPassword).asString,
+        connectTimeout: fromEnv(EnvName.DbConnectTimeout).asNumber,
+        connectLimit: fromEnv(EnvName.DbConnectLimit).asNumber,
+        acquireTimeout: fromEnv(EnvName.DbAcquireTimeout).asNumber,
+        waitForConnections: fromEnv(EnvName.DbWaitForConnections).asBool,
+        queueLimit: fromEnv(EnvName.DbQueueLimit).asNumber,
+      } as IMysqlConfig;
+    case 'sqlite':
+      return {
+        type: 'sqlite',
+        filename: fromEnv(EnvName.DbFile).asString,
+      } as ISqliteConfig;
+    default:
+      throw new BootstrapError('DB_TYPE', `Unknown database type "${type}"`);
+  }
 }

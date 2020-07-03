@@ -4,7 +4,7 @@
 
 # NestJS Backend Starter
 
-> A small nestjs backend with integration of mysql
+> A small nestjs backend with integration of mysql / sqlite
 
 
 ## Motivation
@@ -16,7 +16,7 @@
   * Connection to MySQL database is available. The database is executing in a docker container together with phpMyAdmin.
   * Use of SQL easily possible
   * The finished backend with NestJS can be executed in a docker container.
-* Standards are using (MySql + phpMyAdmin), Node, NestJs, Express, OpenApi, Docker, Docker Compose
+* Standards are using (MySql + phpMyAdmin) or Sqlite, Node, NestJs, Express, OpenApi, Docker, Docker Compose
 
 ## Quote from Nestjs
 
@@ -46,7 +46,7 @@ Some programs must be available on the developer computer:
 
 ### Before Usage
 
-* Setup the different ports for the backend server, the database server and the phpMyAdmin instances.
+* Setup the different ports for the backend server, the database server (MySql) and the phpMyAdmin instances.
 * Search for the TODO and insert or replace value with your project specifications
 * Build the docker images
 
@@ -60,7 +60,7 @@ Then the two files `test-private.pem` and `test-public.pem` are available, which
 > **NOTE**: Please never commit the keys to the git repository.
 
 
-### Database in Docker
+### Database (MySql) in Docker
 
 The Mysql / MariaDB database engine is running in docker container instance. There is also an instance of `phpMyAdmin` to edit the database data.
 
@@ -95,14 +95,31 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 | **PORT**            | -              | Yes      | Yes | The port of the server being listen for request
 | **HOST**            | `localhost`    | No       | Yes | The host name of the server
 | **APP_HOME**        | -              | No       | No  | The application home directory. From the `HOME` directory are several sub directory with files.
+| **DB_TYPE**         | -              | Yes      | Yes | Which type of database is configure:<br>**mysql**: The configuration is for MySQL database<br>**sqlite**: The database is for Sqlite database.
+| **MySQL Server**    |                |          |     |
 | **DB_PORT**         | `3306`         | No       | Yes | The port of the database service
 | **DB_HOST**         | `localhost`    | No       | Yes | The host name of the database server
 | **DB_USER**         | -              | Yes      | Yes | The database user
 | **DB_DATABASE**     | -              | Yes      | Yes | The name of the database
 | **DB_PASSWORD**     | -              | Yes      | No  | The password of the database user.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
+| **Sqlite Server**   |                |          |     |
+| **DB_FILE**         | -              | Yes      | Yes | The filename of the sqlite database
 | **AUTH_PRI_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the private key
 | **AUTH_PUB_FILE**   | -              | Yes      | Yes | Environment variable for the filename of the public key
 | **DIGEST_SECRET**   | -              | Yes      | Yes | Environment variable for the digest secret in order of hash the password of the user. It could be a very long line of text.<br>**REMARK** The environment is setting outside of the PM2 configuration. It is setting on the **User** `.profile` file
+
+
+### Type of Database
+
+The backend is able to work with [MySql](MySql) or [MariaDB](MariaDB) or [Sqlite](Sqlite).
+
+* **MySql** or **MariaDB** are using the node module <https://github.com/mysqljs/mysql>
+* **Sqlite** is using the node module <https://github.com/mapbox/node-sqlite3>
+
+The environment variable `DB_TYPE` determines which database the backend works with. There are two possible values:
+
+* `mysql` for MySql configuration
+* `sqlite` for Sqlite configuration
 
 
 ### PM2 Configuration
@@ -110,7 +127,9 @@ The application is managed via  **PM2** <https://pm2.keymetrics.io/docs/usage/pm
 [PM2](PM2) is configured via a javascript config file. The file name must end with `config.js`.
 
 
-**An excerpt from the configuration**
+#### MySql Configuration
+
+**An excerpt from the configuration (MySql)**
 
 ```js
 /*!
@@ -134,6 +153,7 @@ module.exports = {
       env: {
         'PORT': '17050',
         'HOST': '127.0.0.1',
+        'DB_TYPE': 'mysql',    // use the mysql database
         'DB_PORT': '3306',
         'DB_HOST': 'localhost',
         'DB_USER': 'dbUser',
@@ -161,6 +181,49 @@ The critical environment settings are not setting in the **PM2** configuration f
 ```text
 export DB_PASSWORD=xxxx
 export DIGEST_SECRET=Phantasie ist alles. Es ist die Vorschau auf die kommenden Ereignisse des Lebens (Einstein).
+```
+
+
+#### Sqlite Configuration
+
+**An excerpt from the configuration (Sqlite)**
+
+```js
+/*!
+ * Configuration file for the PM2
+ */
+const os = require('os');
+
+// ...
+
+const userHome = os.homedir();
+const digestSecret = fromEnv('DIGEST_SECRET').asString;
+
+module.exports = {
+  apps: [
+    {
+      name: 'appName',
+      script: `${userHome}/path/to/installed/lib/main.js`,
+      cwd: `${userHome}/path/to/installed`,
+      watch: true,
+      env: {
+        'PORT': '17050',
+        'HOST': '127.0.0.1',
+        'DB_TYPE': 'sqlite',      // use the Sqlite databse
+        'DB_FILE': `${userHome}/var/app/database.db`,
+        'AUTH_PRI_FILE': `${userHome}/etc/app/private-key.pem`,
+        'AUTH_PUB_FILE': `${userHome}/etc/app/puplic-key.pem`,
+        'DIGEST_SECRET': digestSecret,
+      },
+      listen_timeout: 5000,
+      kill_timeout: 2000,
+      restart_delay: 4000,
+      max_restarts: 5,
+      wait_ready: true,
+      source_map_support: true,
+    }
+  ]
+};
 ```
 
 
@@ -267,3 +330,6 @@ SOFTWARE.
 [Typescript]:https://www.typescriptlang.org/
 [OpenApiSpec]:https://www.openapis.org/
 [PM2]:https://pm2.keymetrics.io/
+[MySql]:https://www.mysql.com/
+[MariaDB]:https://mariadb.org/
+[Sqlite]:https://www.sqlite.org/index.html

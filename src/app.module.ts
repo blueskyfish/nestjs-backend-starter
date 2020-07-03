@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import * as path from 'path';
-import { EnvName } from './app.config';
+import { buildDatabaseConfig, EnvName } from './app.config';
 import { AppAuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './auth/user';
 import { AppCommonModule } from './common/common.module';
@@ -18,20 +18,7 @@ import { UserController } from './controller/user.controller';
 
     AppCommonModule.forRoot({
       // database config
-      db: {
-        type: 'mysql',
-        host: fromEnv(EnvName.DbHost).asString,
-        port: fromEnv(EnvName.DbPort).asNumber,
-        user: fromEnv(EnvName.DbUser).asString,
-        database: fromEnv(EnvName.DbDatabase).asString,
-        password: fromEnv(EnvName.DbPassword).asString,
-        connectTimeout: fromEnv(EnvName.DbConnectTimeout).asNumber,
-        connectLimit: fromEnv(EnvName.DbConnectLimit).asNumber,
-        acquireTimeout: fromEnv(EnvName.DbAcquireTimeout).asNumber,
-        waitForConnections: fromEnv(EnvName.DbWaitForConnections).asBool,
-        queueLimit: fromEnv(EnvName.DbQueueLimit).asNumber,
-      },
-
+      db: buildDatabaseConfig(),
       // setting config
       appHome: fromEnv(EnvName.AppHome).asString || path.normalize(path.join(__dirname, '..')),
     }),
