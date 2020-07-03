@@ -22,6 +22,7 @@ const SQL_FIND_USER = [
 describe('Register User', () => {
 
   let app: INestApplication = null;
+  let dbService: DbService = null;
   let userId: number = null;
 
   beforeAll(async () => {
@@ -35,8 +36,8 @@ describe('Register User', () => {
     app = testModule.createNestApplication();
     await app.init();
 
-    const db = app.get(DbService);
-    const conn = db.getConnection();
+    dbService = app.get(DbService);
+    const conn = dbService.getConnection();
     try {
       const userId = await conn.selectOne<{userId: number}>(SQL_FIND_USER, { email: 'test@test.de'});
       if (!_.isNil(userId)) {
@@ -50,8 +51,7 @@ describe('Register User', () => {
   afterAll(async () => {
 
     if (!_.isNil(userId)) {
-      const db = app.get(DbService);
-      const conn = db.getConnection();
+      const conn = dbService.getConnection();
       try {
         await conn.delete(SQL_DELETE_USER, {userId});
       } finally {
@@ -59,6 +59,7 @@ describe('Register User', () => {
       }
     }
 
+    await dbService.release();
     await app.close();
   });
 

@@ -3,11 +3,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { HTTP_AUTH_HEADER } from '../src/auth';
 import { LoginPayload, LoginUser, UserInfo } from '../src/business/user/entities';
+import { DbService } from '../src/common/database';
 import { TestModule } from './test.module';
 
 describe('User Login', () => {
 
   let app: INestApplication = null;
+  let dbService: DbService = null;
 
   beforeAll(async () => {
 
@@ -19,9 +21,14 @@ describe('User Login', () => {
 
     app = testModule.createNestApplication();
     await app.init();
+
+    dbService = app.get(DbService);
   });
 
-  afterAll(async () => await app.close());
+  afterAll(async () => {
+    await dbService.release();
+    await app.close()
+  });
 
   it('User Login and get Info', async () => {
     const data: LoginPayload = {

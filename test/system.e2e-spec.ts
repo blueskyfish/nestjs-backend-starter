@@ -2,10 +2,12 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { About } from '../src/business/system/entity';
+import { DbService } from '../src/common/database';
 import { TestModule } from './test.module';
 
 describe('SystemController (e2e)', () => {
-  let app: INestApplication;
+  let app: INestApplication = null;
+  let dbService: DbService = null;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,9 +18,13 @@ describe('SystemController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    dbService = app.get(DbService);
   });
 
-  afterAll(async () => await app.close());
+  afterAll(async () => {
+    await dbService.release();
+    await app.close()
+  });
 
   it('/ (GET)', async () => {
     const helloRes = await request(app.getHttpServer())
