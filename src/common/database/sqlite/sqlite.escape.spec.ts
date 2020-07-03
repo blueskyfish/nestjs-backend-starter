@@ -22,12 +22,14 @@ describe('Sqlite Escape', () => {
 
   it('Escape Statement: objects', () => {
     const sql = SqliteEscape.escapeQuery(
-      'INSERT INTO `test` (name, email) VALUES({name}, {email})',
+      'INSERT INTO `test` (name, email, age, city) VALUES({name}, {email}, {age}, {city})',
       {
         name: 'Maria',
         email: 'maria@test.de',
+        age: 47,
+        city: null,
       });
-    expect('INSERT INTO `test` (name, email) VALUES(\'Maria\', \'maria@test.de\')').toEqual(sql);
+    expect('INSERT INTO `test` (name, email, age, city) VALUES(\'Maria\', \'maria@test.de\', 47, NULL)').toEqual(sql);
   });
 
   it('Escape string', () => {

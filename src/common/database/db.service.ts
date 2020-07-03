@@ -15,10 +15,16 @@ export class DbService implements IDatabaseService {
   constructor(private db: IDatabaseService) {
   }
 
+  /**
+   * @see {@link IDatabaseService.getConnection}
+   */
   getConnection(): IDatabaseConnection {
     return this.db.getConnection();
   }
 
+  /**
+   * @see {@link IDatabaseService.release}
+   */
   async release(): Promise<void> {
     await this.db.release();
   }

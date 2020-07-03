@@ -3,7 +3,7 @@ import { MysqlError } from 'mysql';
 import { CommonError } from '../error';
 import { MysqlUtil } from './mysql';
 
-export const DB_ERROR_GROUP = 'mysql';
+export const DB_ERROR_GROUP = 'db';
 
 export class DbError extends CommonError {
 
@@ -12,6 +12,13 @@ export class DbError extends CommonError {
       sql,
     });
     this.stack = stack;
+  }
+}
+
+export class SqliteError extends CommonError {
+
+  constructor(code: string, message: string, data?: any) {
+    super(HttpStatus.BAD_REQUEST, DB_ERROR_GROUP, code, message, data);
   }
 }
 

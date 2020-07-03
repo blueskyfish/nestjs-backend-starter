@@ -1,18 +1,17 @@
-import { Injectable, Logger, OnApplicationShutdown } from '@nestjs/common';
+import { Logger, OnApplicationShutdown } from '@nestjs/common';
 import { Moment } from 'moment';
 import { createPool, MysqlError, Pool, PoolConnection } from 'mysql';
 import { DateUtil, forEachIterator } from '../../util';
 import { NULL_VALUE } from '../db.config';
+import { DB_ERROR_GROUP } from '../db.error';
 import { IDatabaseService } from '../kind';
 import { MysqlConfig } from './mysql.config';
 import { MysqlConnection } from './mysql.connection';
-import { DB_ERROR_GROUP } from '../db.error';
 import { MysqlUtil } from './mysql.util';
 
 /**
  * Manages the database connection pool
  */
-@Injectable()
 export class MysqlService implements OnApplicationShutdown, IDatabaseService {
 
   /**
@@ -113,6 +112,11 @@ export class MysqlService implements OnApplicationShutdown, IDatabaseService {
     return new MysqlConnection(this.logger, this._pool);
   }
 
+  /**
+   * Shutdown the database and close the pool
+   *
+   * @return {Promise<void>}
+   */
   async release(): Promise<void> {
     await this.shutdown();
   }
