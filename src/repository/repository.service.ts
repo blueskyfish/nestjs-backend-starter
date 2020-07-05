@@ -20,7 +20,7 @@ export class RepositoryService {
     try {
       return await businessFunc(rep);
     } catch (e) {
-      this.handleError(e);
+      RepositoryService.handleError(e);
     } finally {
       // close the repository
       rep.close();
@@ -29,7 +29,7 @@ export class RepositoryService {
     }
   }
 
-  private handleError(e): void {
+  private static handleError(e): void {
 
     if (e instanceof TypeError) {
       throw new CommonError(HttpStatus.BAD_REQUEST, 'server', 'code', 'Error from javascript', {
@@ -46,13 +46,11 @@ export class RepositoryService {
     if (e instanceof CommonError) {
 
       if (e.group === DB_ERROR_GROUP) {
-        throw new CommonError(HttpStatus.BAD_REQUEST, 'server', 'database', 'Internal error from the database', { ...e.data });
+        throw new CommonError(HttpStatus.BAD_REQUEST, 'server', 'database', e.message, { ...e.data });
       }
 
       // fall throws
       throw e;
     }
-
-
   }
 }
