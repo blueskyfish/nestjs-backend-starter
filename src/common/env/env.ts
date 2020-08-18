@@ -1,5 +1,11 @@
-import * as _ from 'lodash';
-import { NumberUtil } from '../util';
+import * as path from 'path';
+import * as os from 'os';
+import { LoUtil, NumberUtil } from '../util';
+
+/**
+ * The user home directory
+ */
+export const HomePath = os.homedir();
 
 /**
  * An environment value
@@ -30,12 +36,12 @@ export class EnvValue {
    * @returns {boolean} return a boolean or `null`
    */
   get asBool(): boolean {
-    if (_.isNil(this.value)) {
+    if (LoUtil.isNil(this.value)) {
       return null;
     }
-    if (_.toLower(this.value) === 'true') {
+    if (LoUtil.toLower(this.value) === 'true') {
       return true;
-    } else if (_.toLower(this.value) === 'false') {
+    } else if (LoUtil.toLower(this.value) === 'false') {
       return false;
     }
     const no = NumberUtil.toInt(this.value);
@@ -43,6 +49,22 @@ export class EnvValue {
       return null;
     }
     return no > 0;
+  }
+
+  /**
+   * Returns the environment variable as filename. It is replace the `{HOME}` and `{CWD}` keys and normalize the path.
+   *
+   * @returns {string}
+   */
+  get asFilename(): string {
+    const value = this.asString;
+    if (LoUtil.isNil(value)) {
+      return null;
+    }
+    return path.normalize(value
+      .replace('{HOME}', HomePath)
+      .replace('{CWD}', process.cwd)
+    );
   }
 
   get hasValue(): boolean {
