@@ -1,8 +1,6 @@
 import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { createDatabaseService, ICommonConfig } from './common.config';
-import { DbService } from './database/db.service';
-import { MysqlConfig, MysqlService } from './database/mysql';
-import { SqliteConfig, SqliteService } from './database/sqlite';
+import { DbService } from './database';
 import { SettingConfig } from './setting/setting.config';
 import { SettingService } from './setting/setting.service';
 
