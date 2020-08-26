@@ -1,10 +1,9 @@
-import * as _ from 'lodash';
-import { NumberUtil } from '../../common/util';
+import { LoUtil, NumberUtil } from '../../common/util';
 
 export class ValidUtil {
 
   static notNum(s: any): boolean {
-    return _.isNil(s) || isNaN(s) || (s * 1 !== s);
+    return LoUtil.isNil(s) || isNaN(s) || (s * 1 !== s);
   }
 
   static isPositiv(s: any): boolean {
@@ -18,7 +17,7 @@ export class ValidUtil {
    * @returns {boolean} `true` means the string has content.
    */
   static notEmpty(s: string): boolean {
-    return !_.isNil(s) && s !== '';
+    return !LoUtil.isNil(s) && s !== '';
   }
 
 }

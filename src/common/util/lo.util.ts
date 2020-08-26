@@ -24,4 +24,8 @@ export class LoUtil {
   static toUpper(s: string): string {
     return s ? s.toUpperCase() : null;
   }
+
+  static isArray(s: any): boolean {
+    return Array.isArray(s);
+  }
 }
