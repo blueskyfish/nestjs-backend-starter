@@ -1,8 +1,8 @@
 import { IMysqlConfig } from './common/database/mysql';
 import { ISqliteConfig } from './common/database/sqlite';
 import { fromEnv } from './common/env';
-import * as _ from 'lodash';
 import { BootstrapError } from './common/error';
+import { LoUtil } from './common/util';
 
 /**
  * The default host of the backend server
@@ -123,7 +123,7 @@ export enum EnvName {
 export function getStageMode(): StageMode {
   const value = fromEnv(EnvName.Stage);
 
-  return value.hasValue && _.toUpper(value.asString) === 'PROD' ? StageMode.Prod : StageMode.Dev;
+  return value.hasValue && LoUtil.toUpper(value.asString) === 'PROD' ? StageMode.Prod : StageMode.Dev;
 }
 
 /**
@@ -137,7 +137,7 @@ export function buildDatabaseConfig(): IMysqlConfig | ISqliteConfig {
   if (!typeValue.hasValue) {
     throw new BootstrapError('DB_TYPE', 'Database type is required');
   }
-  const type = _.toLower(typeValue.asString);
+  const type = LoUtil.toLower(typeValue.asString);
   switch (type) {
     case 'mysql':
       return {
