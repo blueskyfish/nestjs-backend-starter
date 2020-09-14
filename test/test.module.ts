@@ -5,6 +5,7 @@ import { AuthMiddleware } from '../src/auth/user';
 import { AppBusinessModule } from '../src/business/business.module';
 import { SystemService } from '../src/business/system';
 import { AppCommonModule } from '../src/common/common.module';
+import { Stage } from '../src/common/log';
 import { LoginController } from '../src/controller/login.controller';
 import { RegisterController } from '../src/controller/register.controller';
 import { SystemController } from '../src/controller/system.controller';
@@ -22,6 +23,9 @@ import { TEST_AUTH_PRI_FILENAME, TEST_AUTH_PUB_FILENAME } from './test.settings'
         filename: path.join(process.cwd(), 'test', 'starter.db'),
       },
       appHome: process.cwd(),
+      log: {
+        stage: Stage.Test,
+      }
     }),
     AppAuthModule.forRoot({
       priKeyFilename: TEST_AUTH_PRI_FILENAME,
