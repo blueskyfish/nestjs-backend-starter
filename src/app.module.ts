@@ -6,6 +6,7 @@ import { AppAuthModule } from './auth/auth.module';
 import { AuthMiddleware } from './auth/user';
 import { AppCommonModule } from './common/common.module';
 import { fromEnv } from './common/env';
+import { Stage } from './common/log';
 import { AppControllerModule } from './controller/controller.module';
 import { UserController } from './controller/user.controller';
 
@@ -21,6 +22,9 @@ import { UserController } from './controller/user.controller';
       db: buildDatabaseConfig(),
       // setting config
       appHome: fromEnv(EnvName.AppHome).asString || path.normalize(path.join(__dirname, '..')),
+      log: {
+        stage: Stage.Develop, // TODO check the env "NODE_ENVIRONMENT"
+      }
     }),
     AppAuthModule.forRoot({
       priKeyFilename: fromEnv(EnvName.AuthPriFile).asString,

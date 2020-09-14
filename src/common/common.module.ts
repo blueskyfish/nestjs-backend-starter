@@ -1,12 +1,14 @@
 import { DynamicModule, Logger, Module } from '@nestjs/common';
 import { createDatabaseService, ICommonConfig } from './common.config';
 import { DbService } from './database';
+import { LogConfig, LogService } from './log';
 import { SettingConfig } from './setting/setting.config';
 import { SettingService } from './setting/setting.service';
 
 const commonServices: any[] = [
   // Logger <https://docs.nestjs.com/techniques/logger>
   Logger,
+  LogService,
   SettingService,
 ];
 
@@ -38,6 +40,10 @@ export class AppCommonModule {
         useValue: new SettingConfig({
           appHome: config.appHome,
         }),
+      },
+      {
+        provide: LogConfig,
+        useValue: new LogConfig(config.log),
       },
     ];
 

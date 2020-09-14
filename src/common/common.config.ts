@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { DB_ERROR_GROUP, DbService } from './database';
 import { IMysqlConfig, MysqlConfig, MysqlService } from './database/mysql';
 import { ISqliteConfig, SqliteConfig, SqliteService } from './database/sqlite';
+import { ILogConfig } from './log';
 import { ISettingConfig } from './setting/setting.config';
 
 /**
@@ -13,6 +14,11 @@ export interface ICommonConfig extends ISettingConfig {
    * The database configuration.
    */
   db: IMysqlConfig | ISqliteConfig;
+
+  /**
+   * The log configuration
+   */
+  log: ILogConfig;
 }
 
 export function createDatabaseService(config: IMysqlConfig | ISqliteConfig, logger: Logger): DbService {
