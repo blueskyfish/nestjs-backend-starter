@@ -24,8 +24,21 @@ export enum EnvName {
    *
    * * `PROD` means the application is running on a production computer
    * * else the application is running in developer mode.
+   *
+   * **NOTE**  This environment is override from `NODE_ENV`.
+   *
+   * @see {@link EnvName.NodeEnv}
    */
   Stage = 'STAGE',
+
+  /**
+   * The default way to mark an application is running in **production** stage.
+   *
+   * **NOTE**: This environment is override the environment variable `STAGE`
+   *
+   * @see {@link EnvName.Stage}
+   */
+  NodeEnv = 'NODE_ENV',
 
   /** Environment variable for the backend server host */
   Host = 'HOST',
@@ -121,6 +134,14 @@ export enum EnvName {
  * @return {StageMode} the stage mode
  */
 export function getStageMode(): StageMode {
+
+  const nodeEnv = fromEnv(EnvName.NodeEnv);
+  if (nodeEnv.hasValue) {
+    // the "NODE_ENV" is existing and now it will be evaluated
+    return LoUtil.toLower(nodeEnv.asString) === 'production' || LoUtil.toUpper(nodeEnv.asString) === 'PROD' ?
+      StageMode.Prod : StageMode.Dev;
+  }
+
   const value = fromEnv(EnvName.Stage);
 
   return value.hasValue && LoUtil.toUpper(value.asString) === 'PROD' ? StageMode.Prod : StageMode.Dev;
