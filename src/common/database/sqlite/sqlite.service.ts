@@ -1,6 +1,7 @@
-import { Logger, OnApplicationShutdown } from '@nestjs/common';
+import { OnApplicationShutdown } from '@nestjs/common';
 import * as _ from 'lodash';
 import { Database } from 'sqlite3';
+import { LogService } from '../../log';
 import { forEachIterator } from '../../util';
 import { IDatabaseService } from '../kind';
 import { SQLITE_GROUP, SqliteConfig } from './sqlite.config';
@@ -16,7 +17,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
 
   private db: Database = null;
 
-  constructor(private logger: Logger, private config: SqliteConfig) {
+  constructor(private log: LogService, private config: SqliteConfig) {
   }
 
   getConnection(): SqliteConnection {
@@ -27,7 +28,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
 
   releaseConnection(conn: SqliteConnection): void {
     if (_.isNil(conn) || !this.connectMap.has(conn.id)) {
-      this.logger.warn('Missing connection id', SQLITE_GROUP);
+      this.log.warn(SQLITE_GROUP, 'Missing connection id');
     }
 
     this.connectMap.delete(conn.id);
@@ -139,7 +140,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
       await this.query('COMMIT;');
       return true;
     } catch (e) {
-      this.logger.warn(`Commit (${e.message})`, SQLITE_GROUP);
+      this.log.warn(SQLITE_GROUP, `Commit (${e.message})`);
       return false;
     }
   }
@@ -153,7 +154,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
     try {
       await this.query('ROLLBACK');
     } catch (e) {
-      this.logger.warn(`Rollback (${e.message})`, SQLITE_GROUP);
+      this.log.warn(SQLITE_GROUP, `Rollback (${e.message})`);
       return false;
     }
   }
@@ -173,7 +174,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
     if (_.isNil(this.db)) {
       this.db = await SqliteUtil.openDatabase(this.config);
       this.db.on('profile', (sql, time) => {
-        this.logger.debug(`Profile sql (${time} ms):\n${sql}`, SQLITE_GROUP)
+        this.log.debug(SQLITE_GROUP, `Profile sql (${time} ms):\n${sql}`)
       });
     }
     return this.db;

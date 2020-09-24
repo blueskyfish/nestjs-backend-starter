@@ -1,4 +1,3 @@
-import * as path from 'path';
 import * as os from 'os';
 import { LoUtil, NumberUtil, PathUtil } from '../util';
 

@@ -1,8 +1,7 @@
-import { Logger } from '@nestjs/common';
 import { DB_ERROR_GROUP, DbService } from './database';
 import { IMysqlConfig, MysqlConfig, MysqlService } from './database/mysql';
 import { ISqliteConfig, SqliteConfig, SqliteService } from './database/sqlite';
-import { ILogConfig } from './log';
+import { LogService } from './log';
 import { ISettingConfig } from './setting/setting.config';
 
 /**
@@ -14,20 +13,15 @@ export interface ICommonConfig extends ISettingConfig {
    * The database configuration.
    */
   db: IMysqlConfig | ISqliteConfig;
-
-  /**
-   * The log configuration
-   */
-  log: ILogConfig;
 }
 
-export function createDatabaseService(config: IMysqlConfig | ISqliteConfig, logger: Logger): DbService {
-  logger.log(`database type "${config.type}" is usage...`, DB_ERROR_GROUP);
+export function createDatabaseService(config: IMysqlConfig | ISqliteConfig, log: LogService): DbService {
+  log.info(DB_ERROR_GROUP, `database type "${config.type}" is usage...`);
   switch (config.type) {
     case 'mysql':
-      return new DbService(new MysqlService(logger, new MysqlConfig(config)));
+      return new DbService(new MysqlService(log, new MysqlConfig(config)));
     case 'sqlite':
-      return new DbService(new SqliteService(logger, new SqliteConfig(config)));
+      return new DbService(new SqliteService(log, new SqliteConfig(config)));
     default:
       throw new TypeError('Database type is required');
   }

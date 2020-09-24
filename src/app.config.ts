@@ -2,17 +2,13 @@ import { IMysqlConfig } from './common/database/mysql';
 import { ISqliteConfig } from './common/database/sqlite';
 import { fromEnv } from './common/env';
 import { BootstrapError } from './common/error';
+import { Stage } from './common/stage';
 import { LoUtil } from './common/util';
 
 /**
  * The default host of the backend server
  */
 export const DEFAULT_HOST = 'localhost';
-
-export enum StageMode {
-  Dev = 'dev',
-  Prod = 'prod',
-}
 
 /**
  * The list of environment name
@@ -126,25 +122,6 @@ export enum EnvName {
    * Environment variable for the digest secret in order of hash the password of the user.
    */
   DigestSecret = 'DIGEST_SECRET',
-}
-
-/**
- * Get the stage mode of the application
- *
- * @return {StageMode} the stage mode
- */
-export function getStageMode(): StageMode {
-
-  const nodeEnv = fromEnv(EnvName.NodeEnv);
-  if (nodeEnv.hasValue) {
-    // the "NODE_ENV" is existing and now it will be evaluated
-    return LoUtil.toLower(nodeEnv.asString) === 'production' || LoUtil.toUpper(nodeEnv.asString) === 'PROD' ?
-      StageMode.Prod : StageMode.Dev;
-  }
-
-  const value = fromEnv(EnvName.Stage);
-
-  return value.hasValue && LoUtil.toUpper(value.asString) === 'PROD' ? StageMode.Prod : StageMode.Dev;
 }
 
 /**
