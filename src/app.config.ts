@@ -135,7 +135,7 @@ export function getStageMode(): StageMode {
 export function buildDatabaseConfig(): IMysqlConfig | ISqliteConfig {
   const typeValue = fromEnv(EnvName.DbType);
   if (!typeValue.hasValue) {
-    throw new BootstrapError('DB_TYPE', 'Database type is required');
+    throw new BootstrapError('DB_TYPE', 'Database type is required ("mysql" or "sqlite")');
   }
   const type = LoUtil.toLower(typeValue.asString);
   switch (type) {
@@ -156,7 +156,7 @@ export function buildDatabaseConfig(): IMysqlConfig | ISqliteConfig {
     case 'sqlite':
       return {
         type: 'sqlite',
-        filename: fromEnv(EnvName.DbFile).asString,
+        filename: fromEnv(EnvName.DbFile).asFilename, // replace "{HOME}" or "{CWD}" inside the variable
       } as ISqliteConfig;
     default:
       throw new BootstrapError('DB_TYPE', `Unknown database type "${type}"`);
