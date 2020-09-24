@@ -20,7 +20,7 @@ import { TEST_AUTH_PRI_FILENAME, TEST_AUTH_PUB_FILENAME } from './test.settings'
     AppCommonModule.forRoot({
       db: {
         type: 'sqlite',
-        filename: path.join(process.cwd(), 'test', 'starter.db'),
+        filename: path.join("{CDW}", 'test', 'starter.db'),
       },
       appHome: process.cwd(),
       log: {
