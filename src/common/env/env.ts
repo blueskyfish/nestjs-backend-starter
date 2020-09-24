@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as os from 'os';
-import { LoUtil, NumberUtil } from '../util';
+import { LoUtil, NumberUtil, PathUtil } from '../util';
 
 /**
  * The user home directory
@@ -57,14 +57,7 @@ export class EnvValue {
    * @returns {string}
    */
   get asFilename(): string {
-    const value = this.asString;
-    if (LoUtil.isNil(value)) {
-      return null;
-    }
-    return path.normalize(value
-      .replace('{HOME}', HomePath)
-      .replace('{CWD}', process.cwd)
-    );
+    return PathUtil.adjust(this.asString);
   }
 
   get hasValue(): boolean {

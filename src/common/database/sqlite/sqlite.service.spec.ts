@@ -2,6 +2,7 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestingLogger } from '@nestjs/testing/services/testing-logger.service';
 import * as path from 'path';
+import { PathUtil } from '../../util';
 import { DbService } from '../db.service';
 import { SqliteConfig } from './sqlite.config';
 import { SqliteService } from './sqlite.service';
@@ -29,7 +30,7 @@ describe('Sqlite Service', () => {
           useFactory: (logger: Logger) => {
             return new DbService(new SqliteService(logger, new SqliteConfig({
               type: 'sqlite',
-              filename: path.join(process.cwd(), 'test', 'starter.db')
+              filename: PathUtil.adjust(path.join('{CWD}', 'test', 'starter.db')),
             })))
           }
         }
