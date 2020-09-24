@@ -16,6 +16,9 @@ services:
       - "17306:3306"
     env_file:
       - docker-compose.env
+    networks:
+      nest_starter:
+
   admin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: backend_starter_admin
@@ -25,3 +28,10 @@ services:
       - db:db
     env_file:
       - docker-compose.env
+    networks:
+      nest_starter:
+
+networks:
+  nest_starter:
+    driver: bridge
+    name: "nest start bridge"
