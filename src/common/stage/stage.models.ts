@@ -21,23 +21,3 @@ export enum Stage {
    */
   Prod = 'prod'
 }
-
-export interface ILogConfig {
-
-  /**
-   * The log stage
-   */
-  readonly stage: Stage,
-
-}
-
-export class LogConfig implements ILogConfig {
-
-  get stage(): Stage {
-    return this.config.stage;
-  }
-
-  constructor(private config: ILogConfig) {
-  }
-}
-

@@ -1,0 +1,11 @@
+#
+# Environment settings for test running
+#
+# $ env-cmd -f test.env jest
+# $ env-cmd -f test.dev jest --config ./test/jest-e2e.json
+#
+
+#
+# Stage "DEV" or "TEST" or "PROD"
+
+STAGE=test

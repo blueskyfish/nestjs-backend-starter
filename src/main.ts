@@ -1,22 +1,15 @@
-import { Logger, LogLevel, NotFoundException, ValidationError, ValidationPipe } from '@nestjs/common';
+import { Logger, NotFoundException, ValidationError, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as _ from 'lodash';
-import { DEFAULT_HOST, EnvName, getStageMode, StageMode } from './app.config';
+import { DEFAULT_HOST, EnvName } from './app.config';
 import { AppModule } from './app.module';
 import { API_KEY_NAME, HTTP_AUTH_HEADER } from './auth';
-import { fromEnv, setEnv } from './common/env';
+import { fromEnv } from './common/env';
 import { BootstrapError, ErrorHandlerFilter, ValidError } from './common/error';
+import { Stage, StageService } from './common/stage';
 
 async function bootstrap() {
-
-  const stage = getStageMode();
-  const isDev = stage === StageMode.Dev;
-
-  if (stage === StageMode.Prod) {
-    // set the "node_env" to the production
-    setEnv('NODE_ENV', 'production')
-  }
 
   const host = fromEnv(EnvName.Host).asString || DEFAULT_HOST;
   const port = fromEnv(EnvName.PORT).asNumber;
@@ -25,24 +18,15 @@ async function bootstrap() {
     throw new BootstrapError('Port', 'Server port is required. Set environment "PORT"');
   }
 
-  const logLevels: LogLevel[] = [
-    'log', 'error', 'warn'
-  ];
-
-  if (isDev) {
-    logLevels.push('verbose', 'debug');
-  }
-
-  const app = await NestFactory.create(AppModule, {
-    logger: [...logLevels],
-  });
+  const app = await NestFactory.create(AppModule);
 
   // get the logger (service)
   const logger = app.get(Logger);
+  const stageService = app.get(StageService);
 
   app.enableShutdownHooks();
   app.useGlobalFilters(
-    new ErrorHandlerFilter({ logger, useStack: isDev }),
+    new ErrorHandlerFilter({ logger, useStack: stageService.stage !== Stage.Prod }),
   );
   app.useGlobalPipes(
     new ValidationPipe({
@@ -55,7 +39,7 @@ async function bootstrap() {
     })
   );
 
-  if (isDev) {
+  if (stageService.stage !== Stage.Prod) {
     // (only on dev stage) Open API Configuration
     const options = new DocumentBuilder()
       .setTitle('NestJS Backend Starter')
@@ -83,7 +67,7 @@ async function bootstrap() {
 
   // Start the listen of the server
   await app.listen(port, host, () => {
-    logger.log(`Backend Server (${stage}) is listen http://${host}:${port}/`, 'bootstrap');
+    logger.log(`Backend Server (${stageService}) is listen http://${host}:${port}/`, 'Bootstrap');
   });
 }
 
