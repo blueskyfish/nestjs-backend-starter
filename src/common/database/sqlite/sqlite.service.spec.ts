@@ -2,6 +2,8 @@ import { Logger } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestingLogger } from '@nestjs/testing/services/testing-logger.service';
 import * as path from 'path';
+import { LogService } from '../../log';
+import { StageService } from '../../stage';
 import { PathUtil } from '../../util';
 import { DbService } from '../db.service';
 import { SqliteConfig } from './sqlite.config';
@@ -24,11 +26,13 @@ describe('Sqlite Service', () => {
     app = await Test.createTestingModule({
       providers: [
         Logger,
+        LogService,
+        StageService,
         {
           provide: DbService,
-          inject: [Logger],
-          useFactory: (logger: Logger) => {
-            return new DbService(new SqliteService(logger, new SqliteConfig({
+          inject: [LogService],
+          useFactory: (log: LogService) => {
+            return new DbService(new SqliteService(log, new SqliteConfig({
               type: 'sqlite',
               filename: PathUtil.adjust(path.join('{CWD}', 'test', 'starter.db')),
             })))
