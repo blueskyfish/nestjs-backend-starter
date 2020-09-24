@@ -35,14 +35,14 @@ export class SqliteConnection implements IDatabaseConnection {
    * @see {@link SqliteService.rollback}
    */
   async rollback(): Promise<boolean> {
-    return this.sqlite.rollback();
+    return await this.sqlite.rollback();
   }
 
   /**
    * @see {@link SqliteService.select}
    */
   async select<T>(selectSql: string, values: any = {}): Promise<T[]> {
-    return this.sqlite.select<T>(selectSql, values);
+    return await this.sqlite.select<T>(selectSql, values);
   }
 
   /**
