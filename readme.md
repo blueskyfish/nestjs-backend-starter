@@ -32,12 +32,12 @@
 
 Some programs must be available on the developer computer:
 
-* Node <https://nodejs.org/en/> *use the LTS version*
-* Yarn oder NPM (Yarn <https://classic.yarnpkg.com/lang/en/> *Yarn 2 isn't test*)
+* Node <https://nodejs.org/en/> *use the LTS version* (**minor version is 12.8.0 or upper**)
+* Yarn oder NPM (Yarn <https://classic.yarnpkg.com/lang/en/> *Only Yarn 1 is test, Yarn 2 isn't test*)
 * Docker <https://www.docker.com/>
 * Docker Compose
-* Typescript <https://www.typescriptlang.org/><br>install global: `yarn global add typescript` or `npm i -g typescript`
-* NestJS CLI <https://nestjs.com/><br>install global: `yarn global add @nestjs/cli` or `npm i -g @nestjs/cli`
+* Typescript <https://www.typescriptlang.org/> (*Version 4 or upper*)<br>install global: `yarn global add typescript` or `npm i -g typescript`
+* NestJS CLI <https://nestjs.com/> (*7.4 or upper*)<br>install global: `yarn global add @nestjs/cli` or `npm i -g @nestjs/cli`
 * OpenSSL commando line interface for generate the local or develop cetrications (public and private keys)
 
 
