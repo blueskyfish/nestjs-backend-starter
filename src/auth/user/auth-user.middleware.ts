@@ -22,7 +22,7 @@ export class AuthMiddleware implements NestMiddleware {
 
     if (ValidUtil.notEmpty(token)) {
       try {
-
+        // try to extract from the token the AuthUser and put it an the req instance.
         const authUser = await this.verifierService.fromToken(token);
         AuthUserUtil.updateRequest(req, authUser);
 
@@ -35,6 +35,6 @@ export class AuthMiddleware implements NestMiddleware {
     }
 
     // The request needs an authorization header
-    return next(new AuthError('unauthorized', 'Request needs authorization'));
+    return next(new AuthError('unauthorized', 'Only authenticated users / requests are accepted'));
   }
 }
