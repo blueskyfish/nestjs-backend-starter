@@ -62,6 +62,19 @@ export class LoUtil {
     return result === undefined || result === obj ? defaultValue : result;
   }
 
+  static size(s: string | object | Array<any>): number {
+    if (LoUtil.isString(s)) {
+      return (s as string).length;
+    }
+    if (Array.isArray(s)) {
+      return (s as []).length;
+    }
+    if (typeof s === 'object' && !LoUtil.isNil(s)) {
+      return Object.keys(s).length;
+    }
+    return -1;
+  }
+
   static isArray(s: any): boolean {
     return Array.isArray(s);
   }
