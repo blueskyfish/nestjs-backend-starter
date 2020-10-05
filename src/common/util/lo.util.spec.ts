@@ -176,6 +176,35 @@ describe('LoUtil', () => {
       expect(LoUtil.get(d, 'some.name', null)).toEqual('Sam');
       expect(LoUtil.get(d, 'some.age', NaN)).toEqual(12);
     });
-  })
+  });
+
+  describe('size', () => {
+
+    it('string returns length', () => {
+      expect(LoUtil.size('abc')).toEqual(3);
+      expect(LoUtil.size('Abc' + 'Xyz')).toEqual(6);
+      expect(LoUtil.size('')).toEqual(0);
+    });
+
+    it('Object returns property count', () => {
+      const d1 = {
+        f1: 'Hallo',
+        f2: 23,
+        f3: true,
+        f4: null,
+      };
+      expect(LoUtil.size(d1)).toEqual(4);
+    });
+
+    it('Array returns the count of items', () => {
+      expect(LoUtil.size(['a', 'b'])).toEqual(2);
+      expect(LoUtil.size([12, 23, null, null, 33])).toEqual(5);
+    });
+
+    it('Other values are -1', () => {
+      expect(LoUtil.size(null)).toEqual(-1);
+      expect(LoUtil.size(undefined)).toEqual(-1);
+    })
+  });
 
 });
