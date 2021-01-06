@@ -1,6 +1,6 @@
 {
   "name": "nestjs-backend-starter",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A small nestjs backend with integration of mysql / sqlite",
   "author": {
     "email": "blueskyfish@blueskyfish.de",
