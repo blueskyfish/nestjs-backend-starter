@@ -11,13 +11,11 @@ services:
     image: backend-starter/db
     container_name: backend_starter_db
     volumes:
-      - ./var/mysql/data:/app/data
+      - ./docker/var/mysql/data:/app/data
     ports:
       - "17306:3306"
     env_file:
       - docker-compose.env
-    networks:
-      nest_starter:
 
   admin:
     image: phpmyadmin/phpmyadmin:latest
@@ -28,10 +26,3 @@ services:
       - db:db
     env_file:
       - docker-compose.env
-    networks:
-      nest_starter:
-
-networks:
-  nest_starter:
-    driver: bridge
-    name: "nest start bridge"
