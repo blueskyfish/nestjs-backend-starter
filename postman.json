@@ -1,0 +1,166 @@
+{
+	"info": {
+		"name": "NestJs Backend Starter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Check Backend",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:17050/?name=test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "17050",
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "test"
+						}
+					]
+				},
+				"description": "Check, whether the backend is runnung."
+			},
+			"response": []
+		},
+		{
+			"name": "Alive Backend",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:17050/alive",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "17050",
+					"path": [
+						"alive"
+					]
+				},
+				"description": "Check the backend is running"
+			},
+			"response": []
+		},
+		{
+			"name": "Backend About",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:17050/about",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "17050",
+					"path": [
+						"about"
+					]
+				},
+				"description": "Get the about information from Backend"
+			},
+			"response": []
+		},
+		{
+			"name": "Login Susi",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"susi@test.de\",\n\t\"password\": \"susi1234\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:17050/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "17050",
+					"path": [
+						"login"
+					]
+				},
+				"description": "Login the user **Susi** (a test user)"
+			},
+			"response": []
+		},
+		{
+			"name": "User Info",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "9c473be8befbe6ed3b156c7f91dcd7ac0cbb3c211a85b9a73817bd81cb51df7ca8b133671cd946fccbf878eb0ab487204fb60d101c99bcdf81df6cc668a57dc5abdf6f03cd4ec9b49e7b72057811794f2cb8e12f781dac34b576abbf997e6eb941969e61d8105a839934ca261c9025a0614c1f9e3c4fa8531f8012bb417493904a621c29880e518b2a00a7a6b9281dd068c8bd346dee34144cfbde2761095f9f1a11b7a50a1247a4e7fff6df47f936430bfa59a7d52b00b5c508ec40bded68913d69c99384d27f6228640d53bee15b032b16e83525a8d7cb0a920a16fec75f4bd0536ae199da67dc74a5e8f6cf8fbc34b19c7dfd2f8340353dab4f03a3e6d725",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "x-backend-starter",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:17050/user/info",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "17050",
+					"path": [
+						"user",
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Susi",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"Susi\",\n\t\"email\": \"Susi@test.de\",\n\t\"password\": \"susi1234\",\n\t\"repeat\": \"susi1234\",\n\t\"roles\": [\n\t\t\"user\", \"admin\"\n\t]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:17050/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "17050",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
