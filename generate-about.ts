@@ -1,3 +1,6 @@
+/*!
+ * Generates the about of application
+ */
 
 import * as gitRepoInfo from 'git-repo-info';
 import * as fs from 'fs';
