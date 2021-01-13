@@ -1,5 +1,5 @@
 import { DateTime, Duration, DurationUnit } from 'luxon';
-import { LoUtil } from './lo.util';
+import { isDate, isNil, isString } from './lo.util';
 
 const DATE_FORMAT = 'yyyy-LL-dd';
 const TIME_FORMAT = 'HH:mm';
@@ -20,7 +20,7 @@ export class DateUtil {
   }
 
   static formatTimestamp(m?: DateTime | Date): string {
-    if (LoUtil.isDate(m)) {
+    if (isDate(m)) {
       m = DateTime.fromJSDate(m as Date)
     }
     if (!m) {
@@ -30,7 +30,7 @@ export class DateUtil {
   }
 
   static formatDate(m: DateTime | Date | string): string {
-    if (LoUtil.isString(m) || LoUtil.isDate(m)) {
+    if (isString(m) || isDate(m)) {
       m = DateTime.fromJSDate(m as Date);
     }
     return (m as DateTime).toFormat(DATE_FORMAT);
@@ -56,7 +56,7 @@ export class DateUtil {
   }
 
   static fromDate(date: string | Date): DateTime {
-    if (LoUtil.isDate(date)) {
+    if (isDate(date)) {
       return DateTime.fromJSDate(date as Date);
     }
     return DateTime.fromFormat(date as string, DATE_FORMAT);
@@ -87,7 +87,7 @@ export class DateUtil {
     let date = start;
     while (true) {
       date = func(date);
-      if (LoUtil.isNil(date)) {
+      if (isNil(date)) {
         break;
       }
     }
@@ -107,13 +107,13 @@ export class DateUtil {
     if (typeof value === 'number') {
       value = DateTime.fromSeconds(value)
     }
-    if (LoUtil.isDate(value)) {
+    if (isDate(value)) {
       value = DateTime.fromJSDate(value as Date);
     }
     if (DateTime.isDateTime(value)) {
       diff = DateUtil.now().diff(value, unit);
     }
 
-    return LoUtil.isNil(diff) ? null : diff.toFormat(formatPattern);
+    return isNil(diff) ? null : diff.toFormat(formatPattern);
   }
 }

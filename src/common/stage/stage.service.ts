@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { LoUtil } from '../util';
+import { isNil } from '../util';
 import { Stage } from './stage.models';
 import { getStageFromEnv } from './stage.util';
 
@@ -20,7 +20,7 @@ export class StageService {
   }
 
   private checkStage(): void {
-    if (LoUtil.isNil(this._stage)) {
+    if (isNil(this._stage)) {
       this._stage = getStageFromEnv(this.logger);
     }
   }

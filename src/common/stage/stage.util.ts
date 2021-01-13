@@ -1,11 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { EnvName } from '../../app.config';
 import { fromEnv } from '../env';
-import { LoUtil } from '../util';
+import { isNil, toLower, toUpper } from '../util';
 import { Stage } from './stage.models';
 
 export function asStage(value: string): Stage {
-  switch (LoUtil.toLower(value || '')) {
+  switch (toLower(value || '')) {
     case 'develop':
       return Stage.Develop;
     case 'test':
@@ -25,16 +25,16 @@ export function getStageFromEnv(logger?: Logger): Stage {
   const nodeEnv = fromEnv(EnvName.NodeEnv);
   if (nodeEnv.hasValue) {
     // the "NODE_ENV" is existing and now it will be evaluated
-    stage = LoUtil.toLower(nodeEnv.asString) === 'production' || LoUtil.toUpper(nodeEnv.asString) === 'PROD' ?
+    stage = toLower(nodeEnv.asString) === 'production' || toUpper(nodeEnv.asString) === 'PROD' ?
       Stage.Prod : null;
   }
 
-  if (LoUtil.isNil(stage)) {
+  if (isNil(stage)) {
     const value = fromEnv(EnvName.Stage);
     stage = value.hasValue ? asStage(value.asString) : null;
   }
 
-  if (LoUtil.isNil(stage)) {
+  if (isNil(stage)) {
     (logger && logger.warn('Stage: missing stage information! set stage to "develop"', 'Stage'));
     stage = Stage.Develop;
   } else {

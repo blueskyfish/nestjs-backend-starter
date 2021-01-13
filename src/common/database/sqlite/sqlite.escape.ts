@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { DateUtil, LoUtil } from '../../util';
+import { DateUtil, isDate } from '../../util';
 import { NULL_VALUE } from '../db.config';
 
 export class SqliteEscape {
@@ -41,7 +41,7 @@ export class SqliteEscape {
       case 'boolean':
         return value ? 'true' : 'false';
       case 'object':
-        if (LoUtil.isDate(value) || DateTime.isDateTime(value)) {
+        if (isDate(value) || DateTime.isDateTime(value)) {
           return SqliteEscape.escapeDate(value);
         } else if (Buffer.isBuffer(value)) {
           return SqliteEscape.escapeBuffer(value);

@@ -1,10 +1,4 @@
-import * as os from 'os';
-import { LoUtil, NumberUtil, PathUtil } from '../util';
-
-/**
- * The user home directory
- */
-export const HomePath = os.homedir();
+import { isNil, PathUtil, toInt, toLower } from '../util';
 
 /**
  * An environment value
@@ -26,7 +20,7 @@ export class EnvValue {
    * @returns {number} returns a number or `NaN`.
    */
   get asNumber(): number {
-    return NumberUtil.toInt(this.value);
+    return toInt(this.value);
   }
 
   /**
@@ -35,15 +29,15 @@ export class EnvValue {
    * @returns {boolean} return a boolean or `null`
    */
   get asBool(): boolean {
-    if (LoUtil.isNil(this.value)) {
+    if (isNil(this.value)) {
       return null;
     }
-    if (LoUtil.toLower(this.value) === 'true') {
+    if (toLower(this.value) === 'true') {
       return true;
-    } else if (LoUtil.toLower(this.value) === 'false') {
+    } else if (toLower(this.value) === 'false') {
       return false;
     }
-    const no = NumberUtil.toInt(this.value);
+    const no = toInt(this.value);
     if (isNaN(no)) {
       return null;
     }
