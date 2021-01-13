@@ -1,13 +1,13 @@
-import { LoUtil, NumberUtil } from '../../common/util';
+import { isNil, toInt } from '../../common/util';
 
 export class ValidUtil {
 
   static notNum(s: any): boolean {
-    return LoUtil.isNil(s) || isNaN(s) || (s * 1 !== s);
+    return isNil(s) || isNaN(s) || (s * 1 !== s);
   }
 
   static isPositiv(s: any): boolean {
-    return !ValidUtil.notNum(s) && NumberUtil.toInt(s) > 0;
+    return !ValidUtil.notNum(s) && toInt(s) > 0;
   }
 
   /**
@@ -17,7 +17,7 @@ export class ValidUtil {
    * @returns {boolean} `true` means the string has content.
    */
   static notEmpty(s: string): boolean {
-    return !LoUtil.isNil(s) && s !== '';
+    return !isNil(s) && s !== '';
   }
 
 }

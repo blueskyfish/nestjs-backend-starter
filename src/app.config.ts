@@ -2,8 +2,7 @@ import { IMysqlConfig } from './common/database/mysql';
 import { ISqliteConfig } from './common/database/sqlite';
 import { fromEnv } from './common/env';
 import { BootstrapError } from './common/error';
-import { Stage } from './common/stage';
-import { LoUtil } from './common/util';
+import { toLower } from './common/util';
 
 /**
  * The default host of the backend server
@@ -135,7 +134,7 @@ export function buildDatabaseConfig(): IMysqlConfig | ISqliteConfig {
   if (!typeValue.hasValue) {
     throw new BootstrapError('DB_TYPE', 'Database type is required ("mysql" or "sqlite")');
   }
-  const type = LoUtil.toLower(typeValue.asString);
+  const type = toLower(typeValue.asString);
   switch (type) {
     case 'mysql':
       return {

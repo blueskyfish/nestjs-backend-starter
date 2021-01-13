@@ -1,6 +1,6 @@
 import * as os from 'os';
 import * as path from 'path';
-import { LoUtil } from './lo.util';
+import { isNil } from './lo.util';
 
 /**
  * The user home directory
@@ -19,7 +19,7 @@ export class PathUtil {
    * @returns {string} the adjusted path or null.
    */
   static adjust(pathname: string): string {
-    if (LoUtil.isNil(pathname)) {
+    if (isNil(pathname)) {
       return null;
     }
     return path.normalize(pathname

@@ -1,20 +1,14 @@
-
-import * as _ from 'lodash';
+import { isNil } from './lo.util';
 
 /**
- * An utility class for numbers.
+ * Converts the string into a number.
+ *
+ * @param {string | number} s the value
+ * @returns {number} in case of failed it returns `NaN`.
  */
-export class NumberUtil {
+export function toInt(s: string|number): number {
 
-  /**
-   * Converts the string into a number.
-   *
-   * @param {string | number} s the value
-   * @returns {number} in case of failed it returns `NaN`.
-   */
-  static toInt(s: string|number): number {
-
-    if (_.isNil(s)) {
+    if (isNil(s)) {
       return NaN;
     }
 
@@ -33,9 +27,9 @@ export class NumberUtil {
     return s as number;
   }
 
-  static toFixed(s: number | string, digit = 2): string {
+export function toFixed(s: number | string, digit = 2): string {
     if (typeof s === 'string') {
-      s = NumberUtil.toInt(s);
+      s = toInt(s);
     }
     if (isNaN(s)) {
       return null;
@@ -43,7 +37,7 @@ export class NumberUtil {
     return s.toFixed(digit);
   }
 
-  static adjustInt(value: number, min: number, max: number): number {
+export function adjustInt(value: number, min: number, max: number): number {
     if (isNaN(value) || value < min) {
       value = min;
     }
@@ -52,4 +46,4 @@ export class NumberUtil {
     }
     return value;
   }
-}
+
