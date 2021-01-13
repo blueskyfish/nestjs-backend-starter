@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
-import  { Moment } from 'moment';
-import * as moment from 'moment';
-import { DateUtil } from '../../util';
+import { DateTime } from 'luxon';
+import { DateUtil, LoUtil } from '../../util';
 import { NULL_VALUE } from '../db.config';
 
 export class SqliteEscape {
@@ -42,7 +41,7 @@ export class SqliteEscape {
       case 'boolean':
         return value ? 'true' : 'false';
       case 'object':
-        if (moment.isDate(value) || moment.isMoment(value)) {
+        if (LoUtil.isDate(value) || DateTime.isDateTime(value)) {
           return SqliteEscape.escapeDate(value);
         } else if (Buffer.isBuffer(value)) {
           return SqliteEscape.escapeBuffer(value);
@@ -61,7 +60,7 @@ export class SqliteEscape {
     return `X${SqliteEscape.escapeString(buffer.toString('hex'))}`;
   }
 
-  static escapeDate(date: Moment | Date): string {
+  static escapeDate(date: DateTime | Date): string {
     return SqliteEscape.escapeString(DateUtil.formatTimestamp(date));
   }
 
