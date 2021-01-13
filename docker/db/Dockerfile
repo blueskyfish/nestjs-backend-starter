@@ -1,30 +1,8 @@
 #
-# Build the mysql server
+# MariaDB
 #
-FROM alpine:3.5
-
+FROM mariadb:latest
 WORKDIR /app
-
-RUN \
-  apk add --update mysql mysql-client bash sed && \
-  rm -f /var/cache/apk/*
-
 COPY my.cnf /etc/mysql/my.cnf
-
-COPY startup.sh /startup.sh
-COPY sql /sql
-
-RUN \
-  chmod +x /startup.sh
-
-#
-# Export the data directory
-#
+COPY sql/*.sql /docker-entrypoint-initdb.d/
 VOLUME /app/data
-
-#
-# Export the database port
-#
-EXPOSE 3306
-
-CMD ["/startup.sh"]
