@@ -33,7 +33,7 @@
 Some programs must be available on the developer computer:
 
 * Node <https://nodejs.org/en/> *use the LTS version* (**minor version is 12.8.0 or upper**)
-* Yarn oder NPM (Yarn <https://classic.yarnpkg.com/lang/en/> *Only Yarn 1 is test, Yarn 2 isn't test*)
+* NPM
 * Docker <https://www.docker.com/>
 * Docker Compose
 * Typescript <https://www.typescriptlang.org/> (*Version 4 or upper*)<br>install global: `yarn global add typescript` or `npm i -g typescript`
@@ -46,10 +46,18 @@ Some programs must be available on the developer computer:
 
 ### Before Usage
 
-* Setup the different ports for the backend server, the database server (MySql) and the phpMyAdmin instances.
+* Set up the different ports for the backend server, the database server (MySql) and the phpMyAdmin instances.
 * Search for the TODO and insert or replace value with your project specifications
 * Build the docker images
 
+
+## Install
+
+```shell
+$ git clone https://github.com/blueskyfish/nestjs-backend-starter.git
+$ cd nestjs-backend-starter
+$ cd npm install
+```
 
 ### Testing
 
@@ -59,24 +67,24 @@ Then the two files `test-private.pem` and `test-public.pem` are available, which
 
 > **NOTE**: Please never commit the keys to the git repository.
 
+```shell
+$ npm run test
+```
 
-### Database (MySql) in Docker
 
-The Mysql / MariaDB database engine is running in docker container instance. There is also an instance of `phpMyAdmin` to edit the database data.
+### Database (MariaDB) in Docker
+
+The MariaDB database engine is running in docker container instance. There is also an instance of `phpMyAdmin` to edit the database data.
 
 **Structure**
 
 | Name                       | Description
 |----------------------------|------------------------------------------
-| `docker-compose.yml`       | The docker compose for the mysql database- and phpMyAdmin image.<br>It is depend on the file `docker-compose.env`.
+| `docker-compose.yml`       | The docker compose for the mariadb database- and phpMyAdmin image.<br>It is depend on the file `docker-compose.env`.
 | `docker.compose.env`       | The environment variables for the mysql server.
-| `docker/db`                | The docker directory with the mysql configuration
+| `docker/db`                | The docker directory with the mariadb configuration
 | `docker/db/Dockerfile`     | The MySQL Docker file.
 | `docker/db/sql`            | The directory for sql statement files for initialization of the database.
-
-**Preview of phpMyAdmin**
-
-![Start Page of MySQL Database](assets/phpmyadmin.png)
 
 
 ## Configuration
@@ -304,7 +312,7 @@ async getBookList(@GetAuthUser() authUser: AuthUser, @Param('themeId') themeId: 
 ```text
 MIT License
 
-Copyright (c) 2020 BlueSkyFish
+Copyright (c) 2021 BlueSkyFish
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
