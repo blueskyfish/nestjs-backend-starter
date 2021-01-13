@@ -1,20 +1,18 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { Moment } from 'moment';
+import { DateTime } from 'luxon';
 import { DateUtil } from '../../common/util';
 import { Alive } from './entity';
 
 @Injectable()
 export class AliveService implements OnModuleInit {
 
-  private startTime: Moment = null;
+  private startTime: DateTime = null;
 
   constructor(private logger: Logger) {
   }
 
   alive(): Alive {
-    const now = DateUtil.now();
-    const durationSeconds = Math.abs(this.startTime.diff(now, 'seconds'));
-    const duration = DateUtil.formatDuration(durationSeconds, 'seconds', 'd [days] h [hour] m [min] s [sec]');
+    const duration = DateUtil.formatDuration(this.startTime, 'seconds', 'd hh:mm:ss.SSS');
     return {
       start: DateUtil.formatDateTime(this.startTime),
       duration,

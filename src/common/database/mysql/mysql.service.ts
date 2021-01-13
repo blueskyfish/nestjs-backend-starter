@@ -1,5 +1,5 @@
 import { OnApplicationShutdown } from '@nestjs/common';
-import { Moment } from 'moment';
+import { DateTime } from 'luxon';
 import { createPool, MysqlError, Pool, PoolConnection } from 'mysql';
 import { LogService } from '../../log';
 import { DateUtil, forEachIterator } from '../../util';
@@ -27,7 +27,7 @@ export class MysqlService implements OnApplicationShutdown, IDatabaseService {
    *
    * @type {Map<number, Moment>}
    */
-  private readonly durationMap: Map<number, Moment> = new Map<number, Moment>();
+  private readonly durationMap: Map<number, DateTime> = new Map<number, DateTime>();
 
   private readonly _pool: Pool;
 
