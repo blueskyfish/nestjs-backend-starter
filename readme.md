@@ -16,7 +16,7 @@
   * Connection to MySQL database is available. The database is executing in a docker container together with phpMyAdmin.
   * Use of SQL easily possible
   * The finished backend with NestJS can be executed in a docker container.
-* Standards are using (MySql + phpMyAdmin) or Sqlite, Node, NestJs, Express, OpenApi, Docker, Docker Compose
+* Standards are using (MariaDB + phpMyAdmin) or Sqlite, Node, NestJs, Express, OpenApi, Docker, Docker Compose
 
 ## Quote from Nestjs
 
