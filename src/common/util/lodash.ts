@@ -12,6 +12,16 @@ export function isNil(v: any): boolean {
   return v === null || typeof v === 'undefined';
 }
 
+export function isEmpty(v: any): boolean {
+  if (isNil(v)) {
+    return true;
+  }
+  if (isString(v) || Array.isArray(v)) {
+    return v.length === 0;
+  }
+  return Object.keys(v).length === 0;
+}
+
 export function isString(v: any): boolean {
   return !isNil(v) && typeof v.valueOf() === 'string';
 }
@@ -60,19 +70,24 @@ export function get<T>(obj: object, path: string, defaultValue?: T): T {
   return result === undefined || result === obj ? defaultValue : result;
 }
 
-export function size(s: string | object | Array<any>): number {
+export function size(s: any): number {
+  if (isNil(s)) {
+    return -1;
+  }
   if (isString(s)) {
-    return (s as string).length;
+    return s.length;
   }
   if (Array.isArray(s)) {
-    return (s as []).length;
+    return s.length;
   }
-  if (typeof s === 'object' && !isNil(s)) {
-    return Object.keys(s).length;
-  }
-  return -1;
+  return Object.keys(s).length;
 }
 
-export function isArray(s: any): boolean {
-  return Array.isArray(s);
+export function forEach(s: any, callbackFunc: (element, index, array) => void): void {
+  if (Array.isArray(s)) {
+    s.forEach((element, index, array) => callbackFunc(element, index, array));
+  } else if (typeof s === 'object') {
+    Object.keys(s).forEach((attribute) => callbackFunc(s[attribute], attribute, s));
+  }
 }
+

@@ -1,6 +1,6 @@
 import * as os from 'os';
 import * as path from 'path';
-import { isNil } from './lo.util';
+import { isNil } from './lodash';
 
 /**
  * The user home directory
