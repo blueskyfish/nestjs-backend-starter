@@ -1,6 +1,18 @@
-import { endsWidth, get, isFunction, isNil, isString, size, startsWith, toLower, toUpper, trim } from './lo.util';
+import {
+  endsWidth,
+  get,
+  isEmpty,
+  isFunction,
+  isNil,
+  isString,
+  size,
+  startsWith,
+  toLower,
+  toUpper,
+  trim
+} from './lodash';
 
-describe('LoUtil', () => {
+describe('Lodash', () => {
 
   describe('isNil', () => {
 
@@ -58,7 +70,8 @@ describe('LoUtil', () => {
       function hello(hello: string) {
         console.log(hello);
       }
-      const calc = (x: number, y: number): number => x +y;
+
+      const calc = (x: number, y: number): number => x + y;
 
       expect(isFunction(hello)).toBeTruthy();
       expect(isFunction(calc)).toBeTruthy();
@@ -110,7 +123,7 @@ describe('LoUtil', () => {
       expect(trim('  ABC  ')).toEqual('ABC');
     });
 
-    it ('Empty string return null', () => {
+    it('Empty string return null', () => {
       expect(trim('')).toBeNull();
     });
 
@@ -197,13 +210,46 @@ describe('LoUtil', () => {
     });
 
     it('Array returns the count of items', () => {
-      expect(size(['a', 'b'])).toEqual(2);
-      expect(size([12, 23, null, null, 33])).toEqual(5);
+      expect(size([ 'a', 'b' ])).toEqual(2);
+      expect(size([ 12, 23, null, null, 33 ])).toEqual(5);
     });
 
     it('Other values are -1', () => {
       expect(size(null)).toEqual(-1);
       expect(size(undefined)).toEqual(-1);
+    });
+  });
+
+  describe('isEmpty', () => {
+    it('"null" or "undefined" are empty', () => {
+      expect(isEmpty(null)).toBeTruthy();
+      expect(isEmpty(undefined)).toBeTruthy();
+    });
+
+    it('Empty string or string with content', () => {
+      expect(isEmpty('')).toBeTruthy();
+      expect(isEmpty('abc')).toBeFalsy();
+    });
+
+    it('boolean is empty', () => {
+      expect(isEmpty(true)).toBeTruthy();
+      expect(isEmpty(false)).toBeTruthy();
+    });
+
+    it('Date type is empty', () => {
+      expect(new Date()).toBeTruthy();
+    });
+
+    it('Number type is empty', () => {
+      expect(isEmpty(42)).toBeTruthy();
+    });
+
+    it('Empty Array is true', () => {
+      expect(isEmpty([])).toBeTruthy();
+    });
+
+    it('Array with content is not empty', () => {
+      expect(isEmpty(['abc', 2, 42, 'test'])).toBeFalsy();
     })
   });
 

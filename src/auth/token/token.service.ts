@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { isArray } from '../../common/util';
 import { IAuthData } from '../user';
 import { CryptoService } from '../crypto/crypto.service';
 import { ValidUtil } from '../util';
@@ -30,7 +29,7 @@ export class TokenService {
    */
   fromAuth<AuthData extends IAuthData>(authData: Partial<AuthData>): string {
 
-    if (!ValidUtil.isPositiv(authData.id) || !isArray(authData.roles)) {
+    if (!ValidUtil.isPositiv(authData.id) || !Array.isArray(authData.roles)) {
       throw new TokenError('notSupport', 'The auth data is not support');
     }
 

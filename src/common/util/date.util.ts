@@ -1,5 +1,5 @@
 import { DateTime, Duration, DurationUnit } from 'luxon';
-import { isDate, isNil, isString } from './lo.util';
+import { isDate, isNil, isString } from './lodash';
 
 const DATE_FORMAT = 'yyyy-LL-dd';
 const TIME_FORMAT = 'HH:mm';

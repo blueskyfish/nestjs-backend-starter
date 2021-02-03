@@ -1,4 +1,4 @@
-import { isNil } from './lo.util';
+import { isNil } from './lodash';
 
 /**
  * Converts the string into a number.
