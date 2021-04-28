@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { OPEN_CREATE, OPEN_READWRITE } from 'sqlite3';
+import { isNil } from '../../util';
 
 /**
  * The in memory database
@@ -32,11 +32,11 @@ export class SqliteConfig implements ISqliteConfig {
   }
 
   get filename(): string {
-    return _.isNil(this.config.filename) ? MEMORY_DB : this.config.filename;
+    return isNil(this.config.filename) ? MEMORY_DB : this.config.filename;
   }
 
   get mode(): number {
-    return _.isNil(this.config.mode) ? DEFAULT_MODE : this.config.mode;
+    return isNil(this.config.mode) ? DEFAULT_MODE : this.config.mode;
   }
 
   toString(): string {

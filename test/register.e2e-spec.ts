@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import * as _ from 'lodash';
+import { isNil } from '@nestjs/common/utils/shared.utils';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { HTTP_AUTH_HEADER } from '../src/auth';
@@ -40,7 +40,7 @@ describe('Register User', () => {
     const conn = dbService.getConnection();
     try {
       const userId = await conn.selectOne<{userId: number}>(SQL_FIND_USER, { email: 'test@test.de'});
-      if (!_.isNil(userId)) {
+      if (!isNil(userId)) {
         await conn.delete(SQL_DELETE_USER, {userId});
       }
     } finally {
@@ -50,7 +50,7 @@ describe('Register User', () => {
 
   afterAll(async () => {
 
-    if (!_.isNil(userId)) {
+    if (!isNil(userId)) {
       const conn = dbService.getConnection();
       try {
         await conn.delete(SQL_DELETE_USER, {userId});

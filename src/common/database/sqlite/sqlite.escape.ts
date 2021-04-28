@@ -1,13 +1,12 @@
-import * as _ from 'lodash';
 import { DateTime } from 'luxon';
-import { DateUtil, isDate } from '../../util';
+import { DateUtil, isDate, isNil, size } from '../../util';
 import { NULL_VALUE } from '../db.config';
 
 export class SqliteEscape {
 
   static escapeQuery(query: string, values: any): string {
 
-    if (_.isNull(values) || _.size(values) === 0) {
+    if (isNil(values) || size(values) === 0) {
       return query;
     }
     return query.replace(/{([a-zA-Z0-9]+)?}/g, (text, key) => {
@@ -17,7 +16,7 @@ export class SqliteEscape {
           // concat the values with comma separate
           return item.map((v) => SqliteEscape.escape(v)).join(',');
         }
-        if (_.isNil(item)) {
+        if (isNil(item)) {
           return NULL_VALUE;
         }
         // 'NULL' is sql NULL :-)
@@ -45,7 +44,7 @@ export class SqliteEscape {
           return SqliteEscape.escapeDate(value);
         } else if (Buffer.isBuffer(value)) {
           return SqliteEscape.escapeBuffer(value);
-        } else if (_.isNil(value)) {
+        } else if (isNil(value)) {
           return NULL_VALUE;
         }
         return SqliteEscape.escapeString(JSON.stringify(value));
@@ -65,7 +64,7 @@ export class SqliteEscape {
   }
 
   static escapeString(s: string): string {
-    if (_.isNil(s)) {
+    if (isNil(s)) {
       return ''
     }
     return `'${s.replace(/[']/gm, '\'\'')}'`;

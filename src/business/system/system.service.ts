@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import { promisify } from 'util';
-import * as _ from 'lodash';
 import { SettingService } from '../../common/setting/setting.service';
+import { isNil } from '../../common/util';
 import { About } from './entity';
 
 const readFileAsync = promisify(fs.readFile);
@@ -24,7 +24,7 @@ export class SystemService {
    * @return {Promise<About>}
    */
   async getAbout(): Promise<About> {
-    if (_.isNil(this.aboutData)) {
+    if (isNil(this.aboutData)) {
       try {
         const filename = this.setting.getDataFile('about.json');
         const value = await readFileAsync(filename, 'utf8');

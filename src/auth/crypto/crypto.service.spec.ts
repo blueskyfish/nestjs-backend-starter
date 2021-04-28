@@ -9,7 +9,7 @@ describe('CryptService', () => {
   let app: TestingModule = null;
   let cryptoService: CryptoService = null;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
 
     const priKeyFilename = 'test-private.pem';
     const pubKeyFilename = 'test-public.pem';
@@ -62,6 +62,6 @@ describe('CryptService', () => {
       expect(() => {
         cryptoService.digest(null, 'abc');
       }).toThrow(RequiredError);
-    })
-  })
-})
+    });
+  });
+});

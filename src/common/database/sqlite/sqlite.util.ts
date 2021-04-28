@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { Database } from 'sqlite3';
+import { get as getValue, isNil } from '../../util';
 import { SqliteError } from '../db.error';
 import { ISqliteConfig } from './sqlite.config';
 
@@ -32,7 +32,7 @@ export class SqliteUtil {
    */
   static async closeDatabase(db: Database): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
-      if (!_.isNil(db)) {
+      if (!isNil(db)) {
         resolve(false);
       }
       db.close((err) => {
@@ -146,9 +146,9 @@ export class SqliteUtil {
   }
 
   private static toError(err: Error, groupCode: string): SqliteError {
-    const errno = _.get(err, 'errno', 0);
-    const code = _.get(err, 'code', '');
-    const message = _.get(err, 'message');
+    const errno = getValue(err, 'errno', 0);
+    const code = getValue(err, 'code', '');
+    const message = getValue<string>(err, 'message');
     return new SqliteError(groupCode, message, {
       errno,
       code,

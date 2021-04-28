@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as _ from 'lodash';
 import { ValidUtil } from '../util';
 import { VerifierError } from './verifier.error';
 import { AuthUser, IAuthData } from '../user/';
@@ -48,8 +47,7 @@ export class VerifierService {
     const authData: AuthData = parseAuthData<AuthData>(authValue);
 
     // All required attributes are exist and valid
-    if (!ValidUtil.isPositiv(authData.id) || !_.isArray(authData.roles)
-    ) {
+    if (!ValidUtil.isPositiv(authData.id) || !Array.isArray(authData.roles)) {
       throw new VerifierError('invalid', 'Token data is not valid');
     }
 
