@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { ValidUtil } from '../../../auth/util';
+import { isNil } from '../../../common/util';
 import { SubRepository } from '../sub-repository';
 import { IDbInsertUser, IDbUser } from './entities';
 import { SQL_FIND_USER_BY_EMAIL, SQL_FIND_USER_BY_ID, SQL_FIND_USER_FROM_EMAIL, SQL_INSERT_USER } from './user.sql';
@@ -34,7 +34,7 @@ export class UserRepository extends SubRepository {
    */
   async emailExists(email: string): Promise<boolean> {
     const result = this.conn.selectOne<{userId: number}>(SQL_FIND_USER_FROM_EMAIL, {email});
-    return !_.isNil(result) && ValidUtil.isPositiv(result);
+    return !isNil(result) && ValidUtil.isPositiv(result);
   }
 
   /**

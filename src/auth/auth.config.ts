@@ -11,7 +11,7 @@ export const API_SECURITY: Record<string, string[]>[] = [{
 }];
 
 /**
- * The configuration interface that is extending the {@link ICryptoConfig}
+ * The configuration interface that is extending the {@link CryptoConfig}
  *
  * * priKeyFilename
  * * pubKeyFilename

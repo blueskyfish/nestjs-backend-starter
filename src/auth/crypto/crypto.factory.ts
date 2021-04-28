@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import { BootstrapError } from '../../common/error';
+import { isNil } from '../../common/util';
 import { readKey } from '../util';
 import { CryptoConfig } from './crypto.config';
 
@@ -17,7 +17,7 @@ export async function cryptoFactory(
   const privateKey = await readKey(priKeyFilename);
   const publicKey = await readKey(pubKeyFilename);
 
-  if (_.isNil(digestSecret)) {
+  if (isNil(digestSecret)) {
     throw new BootstrapError('DIGEST_SECRET', 'Missing environment "DIGEST_SECRET"');
   }
 

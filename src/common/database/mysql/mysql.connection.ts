@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
 import { Connection, MysqlError, Pool, PoolConnection } from 'mysql';
 import { LogService } from '../../log';
+import { size, get as getValue } from '../../util';
 import { connectError, DB_ERROR_GROUP, queryError, transactionError } from '../db.error';
 import { IDatabaseConnection } from '../kind';
 
@@ -105,7 +105,7 @@ export class MysqlConnection implements IDatabaseConnection {
    */
   async selectOne<T>(selectSql: string, values: any = {}): Promise<T | null> {
     const list = await this.select<T>(selectSql, values);
-    if (_.size(list) > 0) {
+    if (size(list) > 0) {
       return list[0];
     }
     return null;
@@ -120,7 +120,7 @@ export class MysqlConnection implements IDatabaseConnection {
    */
   async insert(insertSql: string, values: any): Promise<number> {
     const result = await this.execute('insert', insertSql, values);
-    return _.get(result, 'insertId', NaN);
+    return getValue(result, 'insertId', NaN);
   }
 
   /**
@@ -132,7 +132,7 @@ export class MysqlConnection implements IDatabaseConnection {
    */
   async update(updateSql: string, values: any): Promise<number> {
     const result = await this.execute('update', updateSql, values);
-    return _.get(result, 'changedRows', NaN);
+    return getValue(result, 'changedRows', NaN);
   }
 
   /**
@@ -144,7 +144,7 @@ export class MysqlConnection implements IDatabaseConnection {
    */
   async delete(deleteSql: string, values: any): Promise<number> {
     const result = await this.execute('delete', deleteSql, values);
-    return _.get(result, 'affectedRows', NaN);
+    return getValue(result, 'affectedRows', NaN);
   }
 
   /**

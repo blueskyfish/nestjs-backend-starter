@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { isNil, startsWith } from '../../util';
 
 /**
  * These are the prefix of the error codes that are removed
@@ -19,12 +19,12 @@ export class MysqlUtil {
    * @returns {string} the adjusted error code for the {@link DbError}
    */
   static adjustAndLower(errorCode: string, sign = '-'): string {
-    if (_.isNil(errorCode)) {
+    if (isNil(errorCode)) {
       return '';
     }
 
     ERROR_PREFIX.forEach(prefix => {
-      if (_.startsWith(errorCode, prefix)) {
+      if (startsWith(errorCode, prefix)) {
         errorCode = errorCode.substring(prefix.length);
       }
     });
@@ -47,10 +47,10 @@ export class MysqlUtil {
   static getValue<T>(defValue: T, value?: T, min?: number): T {
     const isNumber = typeof defValue === 'number';
 
-    if (_.isNil(value) || (isNumber && isNaN(value as any))) {
+    if (isNil(value) || (isNumber && isNaN(value as any))) {
       return defValue;
     }
-    if (!_.isNil(min) && isNumber && ((value as any) < min)) {
+    if (!isNil(min) && isNumber && ((value as any) < min)) {
       return min as any;
     }
     return value;

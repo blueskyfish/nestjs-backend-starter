@@ -6,7 +6,7 @@ export class CryptoConfig {
 
   constructor(
     public readonly publicKey: string,
-    public readonly privateKey,
-    public readonly digestSecret
+    public readonly privateKey: string,
+    public readonly digestSecret: string
   ) {}
 }

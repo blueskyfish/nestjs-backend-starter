@@ -1,8 +1,7 @@
 import { OnApplicationShutdown } from '@nestjs/common';
-import * as _ from 'lodash';
 import { Database } from 'sqlite3';
 import { LogService } from '../../log';
-import { forEachIterator } from '../../util';
+import { forEachIterator, isNil } from '../../util';
 import { IDatabaseService } from '../kind';
 import { SQLITE_GROUP, SqliteConfig } from './sqlite.config';
 import { SqliteConnection } from './sqlite.connection';
@@ -27,7 +26,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
   }
 
   releaseConnection(conn: SqliteConnection): void {
-    if (_.isNil(conn) || !this.connectMap.has(conn.id)) {
+    if (isNil(conn) || !this.connectMap.has(conn.id)) {
       this.log.warn(SQLITE_GROUP, 'Missing connection id');
     }
 
@@ -35,7 +34,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
   }
 
   async release(): Promise<void> {
-    if (!_.isNil(this.db)) {
+    if (!isNil(this.db)) {
 
       forEachIterator(this.connectMap.values(), (conn) => {
         conn.release();
@@ -171,7 +170,7 @@ export class SqliteService implements OnApplicationShutdown, IDatabaseService {
   }
 
   private async openDatabase(): Promise<Database> {
-    if (_.isNil(this.db)) {
+    if (isNil(this.db)) {
       this.db = await SqliteUtil.openDatabase(this.config);
       this.db.on('profile', (sql, time) => {
         this.log.debug(SQLITE_GROUP, `Profile sql (${time} ms):\n${sql}`)

@@ -1,15 +1,14 @@
-
-import * as _ from 'lodash';
-
 /**
  * An utility class for string
  */
+import { isNil } from './lodash';
+
 export class StringUtil {
 
   static compare(a: string, b: string): number {
-    if (_.isNil(a) && _.isNil(b)) {
+    if (isNil(a) && isNil(b)) {
       return 0;
-    } else if (_.isNil(a) && !_.isNil(b)) {
+    } else if (isNil(a) && !isNil(b)) {
       return -1;
     } else {
       return a.localeCompare(b);

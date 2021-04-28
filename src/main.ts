@@ -1,13 +1,13 @@
 import { Logger, NotFoundException, ValidationError, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as _ from 'lodash';
 import { DEFAULT_HOST, EnvName } from './app.config';
 import { AppModule } from './app.module';
 import { API_KEY_NAME, HTTP_AUTH_HEADER } from './auth';
 import { fromEnv } from './common/env';
 import { BootstrapError, ErrorHandlerFilter, ValidError } from './common/error';
 import { Stage, StageService } from './common/stage';
+import { toUpper } from './common/util';
 
 async function bootstrap() {
 
@@ -58,7 +58,7 @@ async function bootstrap() {
     SwaggerModule.setup('openapi-ui', app, document);
     // The OpenAPI document is available under GET: http://$host:$port/openapi.json
     app.use('/openapi.json', (req, res, next) => {
-      if (_.toUpper(req.method) === 'GET') {
+      if (toUpper(req.method) === 'GET') {
         return res.send(document);
       }
       next(new NotFoundException());

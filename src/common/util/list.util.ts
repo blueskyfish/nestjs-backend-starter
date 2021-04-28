@@ -9,7 +9,7 @@ export const asyncForEach = async <T>(list: T[], callback: DataFunc<T>): Promise
   }
 };
 
-export const forEachIterator = <T>(it: IterableIterator<T>, callback: DataFunc<T>) => {
+export const forEachIterator = <T>(it: IterableIterator<T>, callback: DataFunc<T>): void => {
   for (const value of it) {
     callback(value);
   }
